@@ -1,9 +1,9 @@
 # Events with Google Calendar API in React
 ## Installation
-* clone the repo
-* cd into the repo
-* npm install
-* npm start
+- set `package.json` and run `npm install --legacy-peer-deps` to cmd
+- set `src/index.css` with tailwind settings
+- set `tailwind.config.js` file and `craco.config.js`
+- `npm install;npm start`
 
 ## Using the API
 * Add your own Client Id and Api Key to App.js

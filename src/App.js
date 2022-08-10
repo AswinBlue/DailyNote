@@ -2,6 +2,10 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+import { useEffect, useState } from 'react';
+import { BrowserRouter, Router, Routes } from 'react-router-dom';
+import { FiSettings } from 'react-icons/fi';
+import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 
 function App() {
 
@@ -94,14 +98,18 @@ function App() {
 
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Click to add event to Google Calendar</p>
-        <p style={{fontSize: 18}}>Uncomment the get events code to get events</p>
-        <p style={{fontSize: 18}}>Don't forget to add your Client Id and Api key</p>
-        <button style={{width: 100, height: 50}} onClick={handleClick}>Add Event</button>
-      </header>
+    <div>
+      <BrowserRouter>
+        <div className='flex relative dark:bg-main-dark-bg'>
+          <div className="fixed right-4 bottom-4 z-50">
+            <TooltipComponent content="Settings" position="Top">
+              <button type="button" className="text-3xl p-3 hover:drop-shadow-xl text-white hover:bg-light-gray rounded-full" style={{ background:'blue'}}>
+                <FiSettings/>
+              </button>
+            </TooltipComponent>
+          </div>
+        </div>
+      </BrowserRouter>
     </div>
   );
 }
