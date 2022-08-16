@@ -1,9 +1,11 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Sidebar from './Components/Sidebar';
+import Navbar from './Components/Navbar';
 
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Router, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Router, Routes } from 'react-router-dom';
 import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 
@@ -17,6 +19,8 @@ function App() {
   var API_KEY = ""
   var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"]
   var SCOPES = "https://www.googleapis.com/auth/calendar.events"
+
+  const activeMenu = false;
 
   const handleClick = () => {
     gapi.load('client:auth2', () => {
@@ -107,6 +111,41 @@ function App() {
                 <FiSettings/>
               </button>
             </TooltipComponent>
+          </div>
+
+          {activeMenu ? (
+            <div className='w-72 fixed sidebar dark:bg-secondary-dark-bg bg-white'>
+              <Sidebar></Sidebar>
+            </div>
+          ) : (
+            <div className='w-0 dark:bg-secondary-dark-bg'>
+              <Sidebar></Sidebar>
+            </div>
+          )}
+          <div className={
+            `dark:bg-main-bg bg-main-bg min-h-screen w-full' ${activeMenu ? 'md:ml-72' : 'flex-2'}`
+          }>
+            <div className='fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full'>
+              <Navbar></Navbar>
+            </div>
+          </div>
+
+          <div>
+            <Routes>
+              <Route path="/" element="Calendar Dashboard"/>
+              <Route path="/dashboard" element="Clendar Dashboard"/>
+
+              <Route path="/write" element="Write"/>
+              <Route path="/read" element="Read"/>
+
+
+              <Route path="/kanban" element="Kanban"/>
+              <Route path="/editor" element="Editor"/>
+              <Route path="/calendar" element="Calendar"/>
+              <Route path="/kanban" element="Kanban"/>
+
+              <Route path="/line" element="Line"/>
+            </Routes>
           </div>
         </div>
       </BrowserRouter>
