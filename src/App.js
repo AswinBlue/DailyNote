@@ -3,6 +3,9 @@ import logo from './logo.svg';
 import './App.css';
 import Sidebar from './Components/Sidebar';
 import Navbar from './Components/Navbar';
+import * as C from './Components';
+import * as P from './Pages';
+import { useStateContext } from './Contexts/ContextProvider';
 
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Router, Routes } from 'react-router-dom';
@@ -20,7 +23,8 @@ function App() {
   var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"]
   var SCOPES = "https://www.googleapis.com/auth/calendar.events"
 
-  const activeMenu = false;
+
+  const { activeMenu } = useStateContext();
 
   const handleClick = () => {
     gapi.load('client:auth2', () => {
@@ -135,16 +139,16 @@ function App() {
               <Route path="/" element="Calendar Dashboard"/>
               <Route path="/dashboard" element="Clendar Dashboard"/>
 
-              <Route path="/write" element="Write"/>
-              <Route path="/read" element="Read"/>
+              <Route path="/write" element={<P.Write />} />
+              <Route path="/read" element={<P.Read />} />
 
 
-              <Route path="/kanban" element="Kanban"/>
-              <Route path="/editor" element="Editor"/>
-              <Route path="/calendar" element="Calendar"/>
-              <Route path="/kanban" element="Kanban"/>
+              <Route path="/kanban" element={<P.Kanban />} />
+              <Route path="/editor" element={<P.Editor />} />
+              <Route path="/calendar" element={<P.Calendar />} />
+              <Route path="/kanban" element={<P.Kanban />} />
 
-              <Route path="/line" element="Line"/>
+              <Route path="/line" element={<P.Line />} />
             </Routes>
           </div>
         </div>
