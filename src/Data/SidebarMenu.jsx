@@ -1,23 +1,23 @@
 import React from 'react';
-import { AiOutlineCalendar, AiOutlineShoppingCart, AiOutlineAreaChart, AiOutlineBarChart, AiOutlineStock } from 'react-icons/ai';
+import { AiOutlineCalendar, AiOutlineShoppingCart, AiOutlineAreaChart, AiOutlineBarChart, AiOutlineStock, AiOutlineRead } from 'react-icons/ai';
 import { FiShoppingBag, FiEdit, FiPieChart, FiBarChart, FiCreditCard, FiStar, FiShoppingCart } from 'react-icons/fi';
-import { BsKanban, BsBarChart, BsBoxSeam, BsCurrencyDollar, BsShield, BsChatLeft } from 'react-icons/bs';
+import { BsKanban, BsBarChart, BsBoxSeam, BsCurrencyDollar, BsShield, BsChatLeft, BsPencil } from 'react-icons/bs';
 import { BiColorFill } from 'react-icons/bi';
-import { IoMdContacts } from 'react-icons/io';
-import { RiContactsLine, RiStockLine } from 'react-icons/ri';
-import { MdOutlineSupervisorAccount } from 'react-icons/md';
-import { HiOutlineRefresh } from 'react-icons/hi';
-import { TiTick } from 'react-icons/ti';
+import { RiStockLine } from 'react-icons/ri';
 import { GiLouvrePyramid } from 'react-icons/gi';
-import { GrLocation } from 'react-icons/gr';
+import { SiActigraph } from 'react-icons/si';
 
 export const sidebarMenu = [
     {
       title: 'Dashboard',
       links: [
         {
-          name: 'ecommerce',
-          icon: <FiShoppingBag />,
+          name: 'records',
+          icon: <SiActigraph/>,
+        },
+        {
+          name: 'calendar',
+          icon: <AiOutlineCalendar />,
         },
       ],
     },
@@ -26,26 +26,13 @@ export const sidebarMenu = [
       title: 'Pages',
       links: [
         {
-          name: 'orders',
-          icon: <AiOutlineShoppingCart />,
+          name: 'read',
+          icon: <AiOutlineRead/>,
         },
         {
-          name: 'employees',
-          icon: <IoMdContacts />,
-        },
-        {
-          name: 'customers',
-          icon: <RiContactsLine />,
-        },
-      ],
-    },
-    {
-      title: 'Apps',
-      links: [
-        {
-          name: 'calendar',
-          icon: <AiOutlineCalendar />,
-        },
+          name: 'write',
+          icon: <BsPencil/>,
+        },        
         {
           name: 'kanban',
           icon: <BsKanban />,
@@ -81,20 +68,16 @@ export const sidebarMenu = [
           icon: <FiPieChart />,
         },
         {
-          name: 'financial',
-          icon: <RiStockLine />,
-        },
-        {
-          name: 'color-mapping',
-          icon: <BsBarChart />,
-        },
-        {
           name: 'pyramid',
           icon: <GiLouvrePyramid />,
         },
         {
           name: 'stacked',
           icon: <AiOutlineBarChart />,
+        },
+        {
+          name: 'color-mapping',
+          icon: <BsBarChart />,
         },
       ],
     },

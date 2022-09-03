@@ -12,17 +12,44 @@ import { sidebarMenu } from '../Data/SidebarMenu';
 import { useStateContext } from '../Contexts/ContextProvider';
 
 function Sidebar() {
-    const { activeMenu, setActiveMenu } = useStateContext();
+    const { activeMenu, setActiveMenu, screenSize, setScreenSize } = useStateContext();
     const activeLinkStyle = 'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-white text-md m-2 bg-black';
     const defaultLinkStyle = 'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-gray-700 dark:text-gray-200 dark:hover:text-black hover:bg-light-gray m-2';
     
+    // decide whether keep sidebar or make it closed whenever you click menu
+    // close when window size is small though 'activeMenu' is true
+    const handleCloseSideBar = () => {
+        if (activeMenu && screenSize <= 900) {
+            setActiveMenu(false);
+        }
+    }
+
+    // check window size whenever rerendered
+    useEffect(() => {
+        const handleResize = () => setScreenSize(window.innerWidth); // function which set screenSize as window size
+        handleResize();
+        window.addEventListener('resize', handleResize); // track 'resize' options with 'handleResize' function
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // to decide whether show sidebar or not
+    useEffect(() => {
+      return () => {
+        if (screenSize <= 900) {
+            setActiveMenu(false);
+        } else {
+            setActiveMenu(true);
+        }
+      }
+    }, [screenSize])
+
     return (
         <div className='ml-3 h-screen overflow-auto md:overflow-hidden md:hover:overflow-auto pb-10'>
             {activeMenu && (
                 <>
                     <div className='flex justify-between items-center'>
                         <Link to="/" onClick={() => {
-                            setActiveMenu(false);
+                            handleCloseSideBar();
                         }}
                         className='items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight dark:text-white text-slate-900'
                     >
@@ -50,7 +77,7 @@ function Sidebar() {
                                 {item.links.map((link) => (
                                     <NavLink to={`/${link.name}`}
                                         key={link.name} 
-                                        onClick={()=>{}}
+                                        onClick={handleCloseSideBar}
                                         className={({ isActive }) => (
                                             isActive ? activeLinkStyle : defaultLinkStyle
                                         )}

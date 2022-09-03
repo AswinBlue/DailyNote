@@ -12,13 +12,24 @@ const initialState = {
 }
 
 export const ContextProvider = ({ children }) => {
-    const [activeMenu, setActiveMenu] = useState(true);
+    const [activeMenu, setActiveMenu] = useState(true); // active state of sidebar menu
+    const [isClicked, setIsClicked] = useState(initialState); // click state of navbar menu
+    const [screenSize, setScreenSize] = useState(undefined);
+
+    const handleClick = (clicked) => {
+        setIsClicked({...initialState, [clicked]:true}); // just set true to index of 'clicked'
+    }
 
     return (
         <StateContext.Provider 
             value={({ 
-                activeMenu: activeMenu,
-                setActiveMenu: setActiveMenu,
+                activeMenu,
+                setActiveMenu,
+                isClicked,
+                setIsClicked,
+                handleClick,
+                screenSize,
+                setScreenSize,
             })}
         >
             {children}

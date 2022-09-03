@@ -1,8 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Sidebar from './Components/Sidebar';
-import Navbar from './Components/Navbar';
+import { Navbar, Sidebar, Footer } from './Components';
 import * as C from './Components';
 import * as P from './Pages';
 import { useStateContext } from './Contexts/ContextProvider';
@@ -13,98 +12,7 @@ import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 
 function App() {
-
-  var gapi = window.gapi
-  /* 
-    Update with your own Client Id and Api key 
-  */
-  var CLIENT_ID = ""
-  var API_KEY = ""
-  var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"]
-  var SCOPES = "https://www.googleapis.com/auth/calendar.events"
-
-
   const { activeMenu } = useStateContext();
-
-  const handleClick = () => {
-    gapi.load('client:auth2', () => {
-      console.log('loaded client')
-
-      gapi.client.init({
-        apiKey: API_KEY,
-        clientId: CLIENT_ID,
-        discoveryDocs: DISCOVERY_DOCS,
-        scope: SCOPES,
-      })
-
-      gapi.client.load('calendar', 'v3', () => console.log('bam!'))
-
-      gapi.auth2.getAuthInstance().signIn()
-      .then(() => {
-        
-        var event = {
-          'summary': 'Awesome Event!',
-          'location': '800 Howard St., San Francisco, CA 94103',
-          'description': 'Really great refreshments',
-          'start': {
-            'dateTime': '2020-06-28T09:00:00-07:00',
-            'timeZone': 'America/Los_Angeles'
-          },
-          'end': {
-            'dateTime': '2020-06-28T17:00:00-07:00',
-            'timeZone': 'America/Los_Angeles'
-          },
-          'recurrence': [
-            'RRULE:FREQ=DAILY;COUNT=2'
-          ],
-          'attendees': [
-            {'email': 'lpage@example.com'},
-            {'email': 'sbrin@example.com'}
-          ],
-          'reminders': {
-            'useDefault': false,
-            'overrides': [
-              {'method': 'email', 'minutes': 24 * 60},
-              {'method': 'popup', 'minutes': 10}
-            ]
-          }
-        }
-
-        var request = gapi.client.calendar.events.insert({
-          'calendarId': 'primary',
-          'resource': event,
-        })
-
-        request.execute(event => {
-          console.log(event)
-          window.open(event.htmlLink)
-        })
-        
-
-        /*
-            Uncomment the following block to get events
-        */
-        /*
-        // get events
-        gapi.client.calendar.events.list({
-          'calendarId': 'primary',
-          'timeMin': (new Date()).toISOString(),
-          'showDeleted': false,
-          'singleEvents': true,
-          'maxResults': 10,
-          'orderBy': 'startTime'
-        }).then(response => {
-          const events = response.result.items
-          console.log('EVENTS: ', events)
-        })
-        */
-    
-
-      })
-    })
-  }
-
-
   return (
     <div>
       <BrowserRouter>
@@ -126,30 +34,34 @@ function App() {
               <Sidebar></Sidebar>
             </div>
           )}
-          <div className={
-            `dark:bg-main-bg bg-main-bg min-h-screen w-full' ${activeMenu ? 'md:ml-72' : 'flex-2'}`
-          }>
+          <div className={`
+            dark:bg-main-bg bg-main-bg min-h-screen w-full ${activeMenu ? 'md:ml-72' : 'flex-2'}
+          `}>
             <div className='fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full'>
-              <Navbar></Navbar>
+              <Navbar/>
             </div>
-          </div>
 
-          <div>
-            <Routes>
-              <Route path="/" element="Calendar Dashboard"/>
-              <Route path="/dashboard" element="Clendar Dashboard"/>
+            <div>
+              <Routes>
+                <Route path="/" element={<P.Record />} />
+                <Route path="/record" element={<P.Record />}/>
+                <Route path="/calendar" element={<P.Calendar />}/>
 
-              <Route path="/write" element={<P.Write />} />
-              <Route path="/read" element={<P.Read />} />
+                <Route path="/read" element={<P.Read />} />
+                <Route path="/write" element={<P.Write />} />
+                <Route path="/kanban" element={<P.Kanban />} />
+                <Route path="/editor" element={<P.Editor />} />
+                <Route path="/color_picker" element={<P.ColorPicker />} />
 
-
-              <Route path="/kanban" element={<P.Kanban />} />
-              <Route path="/editor" element={<P.Editor />} />
-              <Route path="/calendar" element={<P.Calendar />} />
-              <Route path="/kanban" element={<P.Kanban />} />
-
-              <Route path="/line" element={<P.Line />} />
-            </Routes>
+                <Route path="/line" element={<P.Line />} />
+                <Route path="/area" element={<P.Area />} />
+                <Route path="/bar" element={<P.Bar />} />
+                <Route path="/pie" element={<P.Pie />} />
+                <Route path="/pyramid" element={<P.Pyramid />} />
+                <Route path="/stacked" element={<P.Stacked />} />
+                <Route path="/color_mapping" element={<P.ColorMapping />} />
+              </Routes>
+            </div>
           </div>
         </div>
       </BrowserRouter>
