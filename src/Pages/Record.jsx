@@ -10,7 +10,7 @@ import { useStateContext } from '../Contexts/ContextProvider';
 const Record = () => {
   return (
     <div className='mt-12'>
-      {/* 처음 항목 */}
+      {/* 1열 */}
       <div className='flex flex-wrap lg:flex-nowrap justify-center'>
         {/* 제목, 설명과 다운로드 버튼 */}
         <div className='bg-white dark:text-gray-200 dark:bg-secondary-dark-bg h-44 rounded-xl w-full lg:w-80 p-8 pt-9 m-3 bg-hero-pattern bg-no-repeat bg-cover bg-center'>
@@ -26,14 +26,14 @@ const Record = () => {
           </div>
         </div>
         {/* 필요한 내용 json으로 작성, 반복문으로 표시 */}
-        <div className='flex m-3 flex-wrap justify-center gap-1 items-center'>
+        <div className='flex m-3 flex-wrap justify-start gap-1 items-center'>
           {earningData.map((item) => (
             <div
               key={item.title}
               className='bg-white dark:text-gray-200 dark:bg-secondary-dark-bg md:w-56 p-4 pt-9 rounded-2xl'
             >
               <button type="button" style={{ color: item.iconColor, backgroundColor: item.iconBg }}
-                className='text-2xl opacity-0.9 rounded-fulll p-4 hover:drop-shadow-xl'>
+                className='text-2xl opacity-0.9 rounded-fulll p-4 hover:ring-1 ring-gray-100 hover:drop-shadow-xl'>
                   {item.icon}
                 </button>
                 <p className='mt-3'>
@@ -53,7 +53,7 @@ const Record = () => {
         </div>
       </div>
 
-      {/* 다음 항목 */}
+      {/* 2열 */}
       <div className='flex gap-10 flex-wrap justify-center'>
         <div className='bg-white dark:text-gray-200 dark:bg-secondary-dark-bg m-3 p-3 rounded-2xl md:w-789'>
           {/* 가로 제목들 */}
@@ -69,7 +69,7 @@ const Record = () => {
           </div>
 
           {/* 본문 표시 영역 */}
-          <div className='mt-10 flex gap-10 flex-wrap justify-center'>
+          <div className='mt-10 flex gap-10 flex-nowrap justify-center'>
             <div className='border-r-1 border-color m-4 pr-10'>
               {/* body1 */}
               <div>
@@ -111,6 +111,7 @@ const Record = () => {
                   color='blue'
                 />
               </div>
+              {/* download button */}
               <div className='mt-10'>
                 <Button
                   color='white'
@@ -120,6 +121,7 @@ const Record = () => {
                 />
               </div>
             </div>
+            {/* chart 2 */}
             <div>
               <StackedChart
                 width='320px'
