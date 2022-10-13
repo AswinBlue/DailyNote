@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useStateContext } from '../Contexts/ContextProvider';
 
-const Button = ({ icon, bgColor, color, bgHoverColor, size, text, borderRadius, width }) => {
+const SwitchButton = ({ icon, bgColor, color, bgHoverColor, size, text, borderRadius, width }) => {
   const { setIsClicked, initialState } = useStateContext();
 
   return (
@@ -17,4 +17,4 @@ const Button = ({ icon, bgColor, color, bgHoverColor, size, text, borderRadius, 
   );
 };
 
-export default Button;
+export default SwitchButton;

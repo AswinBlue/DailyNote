@@ -1,4 +1,5 @@
-export { default as Button } from './Button';
+export { default as SwitchButton } from './SwitchButton';
+export { default as SimpleButton} from './SimpleButton';
 export { default as ThemeSettings } from './ThemeSettings';
 export { default as Sidebar } from './Sidebar';
 export { default as Navbar } from './Navbar';
@@ -13,5 +14,7 @@ export { default as StackedChart } from './Charts/StackedChart';
 export { default as PieChart } from './Charts/PieChart';
 export { default as ChartHeader } from './ChartHeader';
 export { default as Header } from './Header';
+export { default as LineEditor } from './LineEditor';
+export { default as AreaEditor } from './AreaEditor';
 
 // export all components

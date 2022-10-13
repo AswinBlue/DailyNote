@@ -3,7 +3,7 @@ import { GoPrimitiveDot } from 'react-icons/go';
 import { IoIosMore } from 'react-icons/io';
 import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
 
-import { Stacked, Pie, Button, LineChart, StackedChart, SparkLineChart } from '../Components';
+import { Stacked, Pie, SwitchButton, LineChart, StackedChart, SparkLineChart } from '../Components';
 import { earningData, medicalproBranding, recentTransactions, weeklyStats, dropdownData, SparklineAreaData, ecomPieChartData } from '../Data/dummy';
 import { useStateContext } from '../Contexts/ContextProvider';
 
@@ -21,8 +21,7 @@ const Record = () => {
             </div>
           </div>
           <div className='mt-6'>
-            <Button color='white' bgColor='blue' text='Download' borderRadius='10px' size='md'>
-            </Button>
+            <SwitchButton color='white' bgColor='blue' text='Download' borderRadius='10px' size='md'/>
           </div>
         </div>
         {/* 필요한 내용 json으로 작성, 반복문으로 표시 */}
@@ -113,7 +112,7 @@ const Record = () => {
               </div>
               {/* download button */}
               <div className='mt-10'>
-                <Button
+                <SwitchButton
                   color='white'
                   bgColor='blue'
                   text='Download'
