@@ -4,12 +4,15 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { ContextProvider } from './Contexts/ContextProvider';
+import { GAPI } from './API/GAPI';
 
 ReactDOM.render(
   <React.StrictMode>
-    <ContextProvider>
-      <App />
-    </ContextProvider>
+    <GAPI>
+      <ContextProvider>
+        <App />
+      </ContextProvider>
+    </GAPI>
   </React.StrictMode>,
   document.getElementById('root')
 );
