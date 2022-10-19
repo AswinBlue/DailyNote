@@ -24,6 +24,7 @@ const Write = () => {
 
   // submit button
   const onClick = () => {
+    console.log(gapi)
     addCalendarEvent({gapi:gapi, summary:summary, description:description});
   }
 
