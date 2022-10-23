@@ -3,9 +3,6 @@ import React, { useState, useEffect, createContext, useContext, useRef } from 'r
 const GapiContext = createContext();
 export const useGapiContext = () => useContext(GapiContext);
 
-// consts for gapi
-const CALENDAR_CID = 'C_DailyNote';
-
 export const GAPI = ({ children }) => {
   const [gapiLoggedIn, setgapiLoggedIn] = useState(false);  // 로그인 여부를 저장
   const gapi = useRef(null);  // gapi 객체 참조
@@ -121,23 +118,54 @@ export const GAPI = ({ children }) => {
 /* 
   Update with your own Client Id and Api key 
 */
+
 // TODO : map login into login button
+
 // TODO : show limited page if not logged in (set login staste in context)
 
+export const getCalendarList = (gapi, callback) => {
+  if (gapi.current) {
+    var request = gapi.current.client.calendar.calendarList.list();
+    request.execute(event => {
+      console.log(event)
+      callback(event);
+    });
+  }
+  else {
+    console.log("getCalendarList:", 'gapi not loaded');
+  }
+};
+
+export const createCalendar = (gapi, name, callback) => {
+  if (gapi.current) {
+    var request = gapi.current.client.calendar.calendars.insert({summary: name});
+    request.execute(event => {
+      console.log(event)
+      callback(event);
+    });
+  }
+  else {
+    console.log("createCalendar:", 'gapi not loaded');
+  }
+}
 
 // TODO: compse getEvent function
-export const addCalendarEvent = ({gapi, summary, location, description, start, end}) => {
-  console.log('addCalendarEvent:', summary, location, description, start, end)
+export const addCalendarEvent = ({
+  gapi, summary='', location='', description='', 
+  start= new Date().toISOString(), end= new Date().toISOString(), 
+  calendarId}) => {
+
+  console.log('addCalendarEvent:', summary, location, description, start, end, calendarId);
   var event = {
-    'summary': {summary},
-    'location': {location},
-    'description': {description},
+    'summary': summary,
+    // 'location': {location},  // TODO : set location
+    'description': description,
     'start': {
-      'dateTime': '',  // TODO : set time
+      'dateTime': start,  // TODO : set time
       'timeZone': ''
     },
     'end': {
-      'dateTime': '',
+      'dateTime': end,
       'timeZone': ''
     }
   }
@@ -145,22 +173,14 @@ export const addCalendarEvent = ({gapi, summary, location, description, start, e
   if (gapi.current.client.getToken()) {
     var request = gapi.current.client.calendar.events.insert(
       {
-        auth: gapi.current.auth2,
-        calendarId: CALENDAR_CID,
+        calendarId: calendarId,
         resource: event,
-      },
-      // call back function
-      (error, response) => {
-        if (error) {
-          console.log("addEvent error:", error);
-        }
-        console.log("Event added:", response.data);
       }
-    )
+    );
     
     request.execute(event => {
       console.log(event)
-    })
+    });
   } else {
     console.log("addCalendarEvent: token is null");
   }
