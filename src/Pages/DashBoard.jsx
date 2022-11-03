@@ -7,7 +7,7 @@ import { Stacked, Pie, SwitchButton, LineChart, StackedChart, SparkLineChart } f
 import { earningData, medicalproBranding, recentTransactions, weeklyStats, dropdownData, SparklineAreaData, ecomPieChartData } from '../Data/dummy';
 import { useStateContext } from '../Contexts/ContextProvider';
 
-const Record = () => {
+const DashBoard = () => {
   return (
     <div className='mt-12'>
       {/* 1열 */}
@@ -136,4 +136,4 @@ const Record = () => {
   )
 }
 
-export default Record
+export default DashBoard

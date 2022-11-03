@@ -1,7 +1,7 @@
 import React from 'react'
 import { HtmlEditor, Image, Inject, Link, QuickToolbar, RichTextEditorComponent, Toolbar } from '@syncfusion/ej2-react-richtexteditor';
-import { Header, LineEditor, AreaEditor, SimpleButton } from '../Components'
 import { useGapiContext, addCalendarEvent, getCalendarList, createCalendar } from '../API/GAPI';
+import { Header, LineEditor, AreaEditor, SimpleButton, RadioButton } from '../Components'
 
 // consts for gapi
 const CALENDAR_NAME = 'C_DailyNote';
@@ -10,10 +10,11 @@ const Write = () => {
   var summary = '';
   var description = '';
   var calendarId = '';
+  var score = {};
   const {gapi, setGapi, gapiLoggedIn, setgapiLoggedIn} = useGapiContext()
 
   // get input texts from html
-  const onChange = (event) => {
+  const onTextChange = (event) => {
     const {target: {name, value}} = event
     // console.log(name, value)
     
@@ -24,6 +25,11 @@ const Write = () => {
       console.log(description)
       description = value
     }
+  }
+
+  const onRadioChange = (name, value) => {
+    score[name] = value;
+    console.log(score);
   }
 
   // submit button
@@ -57,12 +63,12 @@ const Write = () => {
 
   }
 
-
   return (
     <div className='m-2 md:m-10 p-2 md:p-10 bg-white rounded-3xl'>
       <Header category="Diary" title="Write"/>
-      <LineEditor title='Summary' onChange={onChange}/>
-      <AreaEditor title='Description' onChange={onChange}/>
+      <LineEditor title='Summary' onChange={onTextChange}/>
+      <AreaEditor title='Description' onChange={onTextChange}/>
+      <RadioButton name="Today's mood" onChange={onRadioChange}></RadioButton>
       <SimpleButton onClick={onClick} color='white' bgColor='blue' text='Submit' borderRadius='10px' size='md'/>
     </div>
   )

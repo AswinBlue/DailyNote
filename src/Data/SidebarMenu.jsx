@@ -9,10 +9,10 @@ import { SiActigraph } from 'react-icons/si';
 
 export const sidebarMenu = [
     {
-      title: 'Dashboard',
+      title: 'overview',
       links: [
         {
-          name: 'records',
+          name: 'dashboard',
           icon: <SiActigraph/>,
         },
         {
@@ -23,7 +23,7 @@ export const sidebarMenu = [
     },
   
     {
-      title: 'Pages',
+      title: 'DailyNote',
       links: [
         {
           name: 'read',
@@ -32,52 +32,6 @@ export const sidebarMenu = [
         {
           name: 'write',
           icon: <BsPencil/>,
-        },        
-        {
-          name: 'kanban',
-          icon: <BsKanban />,
-        },
-        {
-          name: 'editor',
-          icon: <FiEdit />,
-        },
-        {
-          name: 'color-picker',
-          icon: <BiColorFill />,
-        },
-      ],
-    },
-    {
-      title: 'Charts',
-      links: [
-        {
-          name: 'line',
-          icon: <AiOutlineStock />,
-        },
-        {
-          name: 'area',
-          icon: <AiOutlineAreaChart />,
-        },
-  
-        {
-          name: 'bar',
-          icon: <AiOutlineBarChart />,
-        },
-        {
-          name: 'pie',
-          icon: <FiPieChart />,
-        },
-        {
-          name: 'pyramid',
-          icon: <GiLouvrePyramid />,
-        },
-        {
-          name: 'stacked',
-          icon: <AiOutlineBarChart />,
-        },
-        {
-          name: 'color-mapping',
-          icon: <BsBarChart />,
         },
       ],
     },

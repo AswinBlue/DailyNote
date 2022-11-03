@@ -53,23 +53,11 @@ function App() {
             {/* url별로 다르게 표시할 화면 */}
             <div>
               <Routes>
-                <Route path="/" element={<P.Record />} />
-                <Route path="/records" element={<P.Record />}/>
+                <Route path="/" element={<P.DashBoard />} />
+                <Route path="/dashboard" element={<P.DashBoard />}/>
                 <Route path="/calendar" element={<P.Calendar />}/>
-
                 <Route path="/read" element={<P.Read />} />
                 <Route path="/write" element={<P.Write />} />
-                <Route path="/kanban" element={<P.Kanban />} />
-                <Route path="/editor" element={<P.Editor />} />
-                <Route path="/color_picker" element={<P.ColorPicker />} />
-
-                <Route path="/line" element={<P.Line />} />
-                <Route path="/area" element={<P.Area />} />
-                <Route path="/bar" element={<P.Bar />} />
-                <Route path="/pie" element={<P.Pie />} />
-                <Route path="/pyramid" element={<P.Pyramid />} />
-                <Route path="/stacked" element={<P.Stacked />} />
-                <Route path="/color_mapping" element={<P.ColorMapping />} />
               </Routes>
             </div>
           </div>

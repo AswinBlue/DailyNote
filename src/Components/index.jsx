@@ -16,5 +16,7 @@ export { default as ChartHeader } from './ChartHeader';
 export { default as Header } from './Header';
 export { default as LineEditor } from './LineEditor';
 export { default as AreaEditor } from './AreaEditor';
+export { default as AddableList } from './AddableList';
+export { default as RadioButton } from './RadioButton';
 
 // export all components
