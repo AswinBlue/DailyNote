@@ -25,17 +25,18 @@ const Write = () => {
       console.log(description)
       description = value
     }
-  }
+  };
 
   const onRadioChange = (name, value) => {
     score[name] = value;
-    console.log(score);
-  }
+    console.log('score:', score);
+  };
 
   // submit button
-  const onClick = () => {
-    console.log(gapi)
-
+  const onSubmit = () => {
+    console.log(gapi);
+    var prefix = JSON.stringify(score) + '\n';
+    description = prefix + description;
     // check CALENDAR_NAME exist. if not, create one
     getCalendarList(gapi, async (event) => {
       await new Promise((resolve) => {
@@ -57,11 +58,16 @@ const Write = () => {
           }); // -> createCalendar
         }
       }); // -> promise
-      // add new event to calendar
-      addCalendarEvent({gapi:gapi, summary:summary, description:description, calendarId});
-    }); // -> getCalendarList
 
-  }
+      // add new event to calendar
+      addCalendarEvent({
+        gapi:gapi,
+        summary:summary, 
+        description:description, 
+        calendarId
+      }); // -> addCalendarEvent
+    }); // -> getCalendarList
+  };
 
   return (
     <div className='m-2 md:m-10 p-2 md:p-10 bg-white rounded-3xl'>
@@ -69,7 +75,7 @@ const Write = () => {
       <LineEditor title='Summary' onChange={onTextChange}/>
       <AreaEditor title='Description' onChange={onTextChange}/>
       <RadioButton name="Today's mood" onChange={onRadioChange}></RadioButton>
-      <SimpleButton onClick={onClick} color='white' bgColor='blue' text='Submit' borderRadius='10px' size='md'/>
+      <SimpleButton onClick={onSubmit} color='white' bgColor='blue' text='Submit' borderRadius='10px' size='md'/>
     </div>
   )
 };
