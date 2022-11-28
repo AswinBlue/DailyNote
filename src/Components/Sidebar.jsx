@@ -54,7 +54,7 @@ function Sidebar() {
                         className='items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight dark:text-white text-slate-900'
                     >
                             <SiGooglecalendar/>
-                            <span>Calendar</span>
+                            <span>DailyNote</span>
                         </Link>
 
                         <TooltipComponent content='Menu' position='BottomCenter'>

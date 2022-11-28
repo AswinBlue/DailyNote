@@ -1,6 +1,10 @@
 import React, { useState, useEffect, createContext, useContext, useRef } from 'react';
 
 const GapiContext = createContext();
+export const gapiConfig = {
+  "CALENDAR_NAME": 'C_DailyNote'
+};
+
 export const useGapiContext = () => useContext(GapiContext);
 
 export const GAPI = ({ children }) => {
@@ -122,12 +126,32 @@ export const GAPI = ({ children }) => {
 // TODO : map login into login button
 
 // TODO : show limited page if not logged in (set login staste in context)
-
+/*
+<calendar object sample>
+{
+    "kind": "calendar#calendarListEntry",
+    "etag": "\"---\"",
+    "id": "---@group.calendar.google.com",
+    "summary": "C_DailyNote",
+    "timeZone": "UTC",
+    "colorId": "17",
+    "backgroundColor": "#9a9cff",
+    "foregroundColor": "#000000",
+    "selected": true,
+    "accessRole": "owner",
+    "defaultReminders": [],
+    "conferenceProperties": {
+        "allowedConferenceSolutionTypes": [
+            "hangoutsMeet"
+        ]
+    }
+}
+*/ 
 export const getCalendarList = (gapi, callback) => {
   if (gapi.current) {
     var request = gapi.current.client.calendar.calendarList.list();
     request.execute(event => {
-      console.log(event)
+      console.log(event);
       callback(event);
     });
   }
@@ -149,7 +173,73 @@ export const createCalendar = (gapi, name, callback) => {
   }
 }
 
-// TODO: compse getEvent function
+/*
+<event object sample>
+{
+ "kind": "calendar#events",
+ "etag": "\"--\"",
+ "summary": "C_DailyNote",
+ "updated": "2022-11-28T10:56:02.736Z",
+ "timeZone": "UTC",
+ "accessRole": "owner",
+ "defaultReminders": [],
+ "nextSyncToken": "--",
+ "items": [
+  {
+   "kind": "calendar#event",
+   "etag": "\"--\"",
+   "id": "--",
+   "status": "confirmed",
+   "htmlLink": "--",
+   "created": "2022-05-24T09:52:55.000Z",
+   "updated": "2022-05-24T14:21:40.742Z",
+   "summary": "summary",
+   "description": "{\"mood\":null,\"description\":\"\",\"summary\":\"summary\"}",
+   "creator": {
+    "email": "--"
+   },
+   "organizer": {
+    "email": "--@group.calendar.google.com",
+    "displayName": "C_DailyNote",
+    "self": true
+   },
+   "start": {
+    "dateTime": "2022-05-23T15:00:00Z",
+    "timeZone": "Asia/Seoul"
+   },
+   "end": {
+    "dateTime": "2022-05-23T16:00:00Z",
+    "timeZone": "Asia/Seoul"
+   },
+   "iCalUID": "--@google.com",
+   "sequence": 0,
+   "reminders": {
+    "useDefault": true
+   },
+   "eventType": "default"
+  },
+
+  ...
+  ]
+}
+  */
+export const getCalendarEvents = (gapi, calendarId, callback) => {
+
+  if (gapi.current.client.getToken()) {
+    console.log('getCalendarEvent:', calendarId);
+    var request = gapi.current.client.calendar.events.list({
+        'calendarId': calendarId
+      });
+      
+      request.execute(event => {
+        console.log(event)
+        callback(event);
+      });
+  } else {
+    console.log("addCalendarEvent: token is null");
+  }
+};
+
 export const addCalendarEvent = ({
   gapi, summary='', location='', description='', 
   start= new Date().toISOString(), end= new Date().toISOString(), 

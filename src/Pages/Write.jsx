@@ -1,10 +1,10 @@
 import React from 'react'
 import { HtmlEditor, Image, Inject, Link, QuickToolbar, RichTextEditorComponent, Toolbar } from '@syncfusion/ej2-react-richtexteditor';
-import { useGapiContext, addCalendarEvent, getCalendarList, createCalendar } from '../API/GAPI';
+import { useGapiContext, addCalendarEvent, getCalendarList, createCalendar, gapiConfig } from '../API/GAPI';
 import { Header, LineEditor, AreaEditor, SimpleButton, RadioButton } from '../Components'
 
 // consts for gapi
-const CALENDAR_NAME = 'C_DailyNote';
+const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
 
 const Write = () => {
   var summary = '';
@@ -33,8 +33,8 @@ const Write = () => {
   };
 
   // submit button
+  // TODO: submit 버튼 클릭시 팝업 호출 및 중복 적용 안되도록 수정
   const onSubmit = () => {
-    console.log(gapi);
     var prefix = JSON.stringify(score) + '\n';
     description = prefix + description;
     // check CALENDAR_NAME exist. if not, create one
