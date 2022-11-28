@@ -7,3 +7,6 @@
 
 ## Using the API
 * Add your own Client Id and Api Key to App.js
+
+## dev logs
+https://hyper-pajama-66e.notion.site/DailyNote-261023634b3c46f4898e1da9f31b7fe0
