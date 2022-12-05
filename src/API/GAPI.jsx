@@ -242,8 +242,15 @@ export const getCalendarEvents = (gapi, calendarId, callback) => {
 
 export const addCalendarEvent = ({
   gapi, summary='', location='', description='', 
-  start= new Date().toISOString(), end= new Date().toISOString(), 
+  start= new Date().toISOString(),
+  end= new Date().toISOString(), 
   calendarId}) => {
+    if (start == end)
+    {
+      end = new Date();
+      end.setMinutes(end.getMinutes() + 30);
+      end = end.toISOString();
+    }
 
   console.log('addCalendarEvent:', summary, location, description, start, end, calendarId);
   var event = {

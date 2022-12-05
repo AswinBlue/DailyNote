@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { GridComponent, ColumnsDirective, ColumnDirective, Resize, Sort, Search, ContextMenu, Filter, Page, ExcelExport, PdfExport, Edit, Inject } from '@syncfusion/ej2-react-grids';
 import { useGapiContext, getCalendarList, createCalendar, getCalendarEvents, gapiConfig } from '../API/GAPI';
+import { JsonParser } from '../API/JsonParser';
 import { Header } from '../Components'
 
 const Read = () => {
   const { gapi, setGapi, gapiLoggedIn, setgapiLoggedIn } = useGapiContext()
   const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
-  var calendarId = '';
   const [eventsData, setEventsData] = useState([]);
   // table format
   const eventsGrid = [
@@ -77,7 +77,7 @@ const Read = () => {
                 };
                 totalData.push(data);
               });
-              console.log(eventsData);
+              console.log(totalData);
               setEventsData(totalData);
             });  //-> getCalendarEvents
           }
@@ -87,6 +87,7 @@ const Read = () => {
 
   return (
     // TODO : refresh 버튼 생성
+    // TODO : 받아올 날짜 설정
     <div className='m-2 md:m-10 p-2 md:p-10 bg-white rounded-3xl'>
       <Header category='Diary' title='Read' />
       {/* 표 세팅. 데이터는 json 형태로 받아옴*/}

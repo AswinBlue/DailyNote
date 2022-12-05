@@ -10,8 +10,14 @@ const Write = () => {
   var summary = '';
   var description = '';
   var calendarId = '';
-  var score = {};
   const {gapi, setGapi, gapiLoggedIn, setgapiLoggedIn} = useGapiContext()
+
+  const score_fields = ["Today's mood"];
+  var score = {};
+  score_fields.forEach(element => {
+    score[element] = "50"  // RadioButton 의 default 선택된 값
+  });
+  
 
   // get input texts from html
   const onTextChange = (event) => {
@@ -74,7 +80,10 @@ const Write = () => {
       <Header category="Diary" title="Write"/>
       <LineEditor title='Summary' onChange={onTextChange}/>
       <AreaEditor title='Description' onChange={onTextChange}/>
-      <RadioButton name="Today's mood" onChange={onRadioChange}></RadioButton>
+      {score_fields.map(element => {
+        console.log('radiobutton', element);
+        return <RadioButton name={element} onChange={onRadioChange}></RadioButton>
+      })}
       <SimpleButton onClick={onSubmit} color='white' bgColor='blue' text='Submit' borderRadius='10px' size='md'/>
     </div>
   )
