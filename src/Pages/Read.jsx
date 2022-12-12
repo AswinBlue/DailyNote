@@ -88,7 +88,7 @@ const Read = () => {
   return (
     // TODO : refresh 버튼 생성
     // TODO : 받아올 날짜 설정
-    <div className='m-2 md:m-10 p-2 md:p-10 bg-white rounded-3xl'>
+    <div className='m-10 p-10 bg-white rounded-3xl'>
       <Header category='Diary' title='Read' />
       {/* 표 세팅. 데이터는 json 형태로 받아옴*/}
       <GridComponent

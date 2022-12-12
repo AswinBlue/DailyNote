@@ -29,7 +29,7 @@ const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
 );
 
 function Navbar() {
-    const { setActiveMenu, isClicked, setIsClicked, handleClick, screenSize, setScreenSize } = useStateContext();
+    const { activeMenu, setActiveMenu, isClicked, setIsClicked, handleClick, screenSize, setScreenSize } = useStateContext();
     const userName = "USER"; // TODO : replace this
     const avatar = null;
 
@@ -37,14 +37,15 @@ function Navbar() {
     
     return (
         <div className='flex justify-between p-2 md:mx-6 relative'>
-            <NavButton 
-                title='Menu' 
-                customFunc={() => {
-                    setActiveMenu((prev) => !prev)
-                }}
-                icon={<AiOutlineMenu />}
-                color='blue'
-            />
+            {activeMenu ? (
+                <NavButton 
+                    title='Menu' 
+                    customFunc={() => {
+                        setActiveMenu((prev) => !prev)
+                    }}
+                    icon={<AiOutlineMenu />}
+                    color='blue'
+                />) : (<p></p>)} {/* flex justify-between으로 profile을 우측 정렬하기 위해 비어있는 항목을 남겨둔다 */}
             <div className='flex'>
                 <NavButton 
                     title='chat' 
@@ -66,7 +67,7 @@ function Navbar() {
                     content="Profile"
                     position="BottomCenter"
                 >
-                    <div 
+                    <div
                         className='flex items-center gap-2 cursor-pointer p-1 hover:bg-lightt-gray rounded-lg'
                         onClick={() => handleClick('userProfile')}
                     >
@@ -86,7 +87,7 @@ function Navbar() {
                 {isClicked.chat && <Chat/>}
                 {isClicked.userProfile && <UserProfile/>}
                 {isClicked.notification && <Notification/>}
-                <div className='flex items-center gap-2 cursor-pointer p-1 hover:;bg-light-gray rounded-lg'>
+                <div className='flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray rounded-lg'>
                     <NavButton 
                         title='UserProfile' 
                         customFunc={() => {
