@@ -21,13 +21,15 @@ function App() {
       {/* 전체 화면구성 */}
         <div className='flex relative dark:bg-main-dark-bg'>
           {/* 우측 하단에 고정으로 떠있는 버튼 */}
-          <div className="fixed right-4 bottom-4 z-50">
+          {/*
+           <div className="fixed right-4 bottom-4 z-50">
             <TooltipComponent content="Settings" position="Top">
               <button type="button" className="text-3xl p-3 hover:drop-shadow-xl text-white hover:bg-light-gray rounded-full" style={{ background:'blue'}}>
                 <FiSettings/>
               </button>
             </TooltipComponent>
-          </div>
+          </div> 
+          */}
 
           {/* sidebar 설정 */}
           {activeMenu ? (

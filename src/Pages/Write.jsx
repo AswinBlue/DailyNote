@@ -80,7 +80,7 @@ const Write = () => {
       <Header category="Diary" title="Write"/>
       <LineEditor title='Summary' onChange={onTextChange}/>
       <AreaEditor title='Description' onChange={onTextChange}/>
-      {score_fields.map(element => {
+      {score_fields.map((element, index) => {
         console.log('radiobutton', element);
         return <RadioButton name={element} onChange={onRadioChange}></RadioButton>
       })}

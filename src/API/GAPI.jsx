@@ -2,16 +2,29 @@ import React, { useState, useEffect, createContext, useContext, useRef } from 'r
 
 const GapiContext = createContext();
 export const gapiConfig = {
-  "CALENDAR_NAME": 'C_DailyNote'
+  "CALENDAR_NAME": 'C_DailyNote',
+  "GOOGLE_LOGIN_BUTTON_ID": "googleProfileDiv",
 };
 
 export const useGapiContext = () => useContext(GapiContext);
 
-export const GAPI = ({ children }) => {
-  const [gapiLoggedIn, setgapiLoggedIn] = useState(false);  // 로그인 여부를 저장
-  const gapi = useRef(null);  // gapi 객체 참조
-  const tokenClient = useRef(null);  // gapi token 참조
 
+export const GAPI = ({ children }) => {
+  const gapi = useRef(null);  // gapi 객체 참조
+  const google = useRef(null);  // gsi 객체 참조
+  const tokenClient = useRef(null); // token 객체
+  const [isSignedIn, setIsSignedIn] = useState(false);  // 화면 refresh 시에도 token을 저장하기 위해 tokenResponse를 저장
+
+  // init gapi client, 최초 1회만 실행
+  useEffect(() => {
+    if (gapi.current === null || google.current === null) {
+      console.log('initGapi');
+      initGapi();
+    }
+  }, []);
+
+  
+  // load google apis by adding script, and login
   const initGapi = async () => {
     const CLIENT_ID = process.env.REACT_APP_CLIENT_ID  // https://console.cloud.google.com/apis/credentials/oauthclient;
     const API_KEY = process.env.REACT_APP_GAPI_KEY  // https://console.developers.google.com/apis/credentials;
@@ -19,11 +32,13 @@ export const GAPI = ({ children }) => {
     const SCOPES = "https://www.googleapis.com/auth/calendar.events";
 
     // load google & gapi script
+
     const google_script = document.createElement("script");
-    const gapi_script = document.createElement("script");
     google_script.src = "https://accounts.google.com/gsi/client";
     google_script.async = true;
     google_script.defer = true;
+    
+    const gapi_script = document.createElement("script");
     gapi_script.src = "https://apis.google.com/js/api.js";
     gapi_script.async = true;
     gapi_script.defer = true;
@@ -31,31 +46,57 @@ export const GAPI = ({ children }) => {
     let google_script_check = new Promise((resolve) => {
       google_script.onload = async () => {
         // REFS: google is not defined 오류 : html에서는 google.으로 참조하였지만, react에서는 window.google. 으로 참조한다.
+        console.log('google.accounts.oauth2', window.google.accounts.oauth2)
         if (tokenClient.current === null) {
           tokenClient.current = await window.google.accounts.oauth2.initTokenClient({
             client_id : CLIENT_ID,
-            scope: SCOPES
+            scope: SCOPES,
+            // requestAccessToken 동작 이후 발생할 callback 함수 설정
+            callback: (tokenResponse) => {
+              console.log('tokenResponse:', tokenResponse);
+              setIsSignedIn(tokenResponse.access_token);
+            }
           });
-          // setTokenClient(_tokenClient);
+
           console.log('tokenClient initiated:', tokenClient.current);
-          resolve();
         } // -> if tokenClient
+
+        // :: google ID 로 로그인하는 방법 (api 사용하려면 token이 필요하여 아래 내용은 미사용)
+        // if (google.current === null) {
+        //   google.current = window.google;
+        //   google.current.accounts.id.initialize({
+        //     client_id : CLIENT_ID,
+        //     scope: SCOPES,
+        //     callback : (data) => console.log(data)
+        //   });
+
+        //   console.log('google initiated:', google.current);
+
+        //   const googleLoginDiv = document.getElementById(gapiConfig.GOOGLE_LOGIN_BUTTON_ID);
+        //   window.google.accounts.id.prompt();
+        //   google.current.accounts.id.renderButton(googleLoginDiv, { 
+        //     type: "standard",
+        //     theme: "outline", 
+        //     size: "medium"
+        //   });
+        // } // -> if google
+
+        resolve();
       } // -> onload
     });
     
     let gapi_script_check = new Promise((resolve) => {
       gapi_script.onload = () => {
         if (gapi.current === null) {
-          gapi.current = window.gapi;
-          gapi.current.load("client", 
+          window.gapi.load("client", 
           // callback
           async () => {
             // Auth to google API
-            await gapi.current.client.init({
+            await window.gapi.client.init({
               apiKey: API_KEY,
-              discoveryDocs: DISCOVERY_DOCS
+              discoveryDocs: DISCOVERY_DOCS,
             });
-            // setGapi(window.gapi);
+            gapi.current = window.gapi;
             console.log('gapi initiated:', gapi.current);
             resolve();
           } // -> callback
@@ -71,53 +112,56 @@ export const GAPI = ({ children }) => {
     // REFS: async 함수 안에서 Promise로 비동기 함수들 생성 후 await Promise.all 함수로 모두 완료됨을 체크
     await Promise.all([gapi_script_check, google_script_check]);
     // login
-    console.log('login status =', gapiLoggedIn);
-    if (gapiLoggedIn === false) {
-      setgapiLoggedIn(gapiLogin(gapi));
-    }
+    gapiLogin(tokenClient, isSignedIn);
   }; // -> initGapi
-    
-  // 로그인
-  const gapiLogin = () => {
-    if ( gapi.current === null || tokenClient.current === null) {
-        console.log('gapiLogin: api not loaded yet');
-      return false;
-    }
-    
-    if (gapi.current.client.getToken() === null) {
-      tokenClient.current.requestAccessToken({prompt: 'consent'});
-      console.log('gapiLogin: login with new session')
-    } else {
-      // Skip display of account chooser and consent dialog for an existing session.
-      tokenClient.current.requestAccessToken({prompt: ''});
-      console.log('gapiLogin: use existing session')
-    }
-    return true;
-  };
-  
-  /* **********
-  * 아래부터 실제 동작
-  * **********/
- 
-  // init gapi client
-  if (gapi.current === null || tokenClient.current === null) {
-    console.log('initGapi: gapi not loaded');
-    initGapi();
-  }
-  
+
   return (
     <GapiContext.Provider
       value={({
           gapi,
-          gapiLoggedIn,
-          setgapiLoggedIn,
+          google,
           tokenClient,
+          isSignedIn,
+          setIsSignedIn,
       })}
     >
       {children}
     </GapiContext.Provider>
   )
 };
+
+// 로그인, token client를 통해 access token을 받아옴
+export const gapiLogin = (tokenClient, isSignedIn) => {
+  if (tokenClient.current === null) {
+      console.log('gapiLogin: api not loaded yet');
+    return;
+  }
+
+  // if (gapi.current.client.getToken() === null) {
+  if (isSignedIn === null) {
+    tokenClient.current.requestAccessToken({prompt: 'consent'});
+    console.log('gapiLogin: login with new session')
+  } else {
+    // Skip display of account chooser and consent dialog for an existing session.
+    tokenClient.current.requestAccessToken({prompt: ''});
+    console.log('gapiLogin: use existing session')
+  }
+};
+
+export const gapiLogout = (gapi, google, setIsSignedIn) => {
+  if ( gapi.current === null || google.current === null) {
+    console.log('gapiLogin: api not loaded yet');
+    return;
+  }
+
+  const token = gapi.current.client.getToken();
+  if (token !== null) {
+    google.current.accounts.oauth2.revoke(token.access_token);
+    gapi.current.client.setToken('');
+    setIsSignedIn(null);
+    console.log('gapi logged out');
+  }
+}
 
 /* 
   Update with your own Client Id and Api key 
@@ -245,7 +289,7 @@ export const addCalendarEvent = ({
   start= new Date().toISOString(),
   end= new Date().toISOString(), 
   calendarId}) => {
-    if (start == end)
+    if (start === end)
     {
       end = new Date();
       end.setMinutes(end.getMinutes() + 30);

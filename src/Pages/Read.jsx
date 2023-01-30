@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { GridComponent, ColumnsDirective, ColumnDirective, Resize, Sort, Search, ContextMenu, Filter, Page, ExcelExport, PdfExport, Edit, Inject } from '@syncfusion/ej2-react-grids';
 import { useGapiContext, getCalendarList, createCalendar, getCalendarEvents, gapiConfig } from '../API/GAPI';
-import { JsonParser } from '../API/JsonParser';
+import { parseJson } from '../API/JsonParser';
 import { Header } from '../Components'
 
 const Read = () => {
-  const { gapi, setGapi, gapiLoggedIn, setgapiLoggedIn } = useGapiContext()
+  const { gapi, setGapi, isSignedIn, setIsSignedIn } = useGapiContext()
   const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
   const [eventsData, setEventsData] = useState([]);
   // table format
@@ -55,7 +55,7 @@ const Read = () => {
   // 최초 1회만 재 랜더링하도록 useEffect 사용
   useEffect(() => {
     loadData();
-  }, [])
+  }, [isSignedIn])
 
   const loadData = () => {
     // load calendars to compose page
@@ -68,16 +68,18 @@ const Read = () => {
             getCalendarEvents(gapi, item.id, (response) => {
               response.items.map(a_event => {
                 // TODO : 데이터 더 세분화 하기
+                var json_meta_data, body_data = parseJson(a_event.description)
                 var data = {
                   "created": a_event.created,
                   "summary": a_event.summary,
-                  "description": a_event.description,
+                  "description": body_data,
                   "start": a_event.start.dateTime,
                   "end": a_event.end.dateTime,
+                  "metaData": json_meta_data,
                 };
                 totalData.push(data);
               });
-              console.log(totalData);
+              console.log('totalData:', totalData);
               setEventsData(totalData);
             });  //-> getCalendarEvents
           }

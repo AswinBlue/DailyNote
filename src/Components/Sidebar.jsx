@@ -62,7 +62,7 @@ function Sidebar() {
                                 onClick={() => {
                                     setActiveMenu((prev) => !prev);
                                 }} 
-                                className='text-xl rounded-full p-3 hover:bg-light-gray mt-4 block lg:hidden'
+                                className='text-xl rounded-full p-3 hover:bg-light-gray mt-4 block'
                             >
                                 <MdOutlineCancel/>
                             </button>

@@ -8,6 +8,8 @@ import { CgProfile } from 'react-icons/cg';
 import { Chat, Notification, UserProfile } from '.';
 import { useStateContext } from '../Contexts/ContextProvider';
 import { MdKeyboardArrowDown } from 'react-icons/md';
+import { gapiConfig } from '../API/GAPI';
+
 
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
     <TooltipComponent
@@ -37,7 +39,7 @@ function Navbar() {
     
     return (
         <div className='flex justify-between p-2 md:mx-6 relative'>
-            {activeMenu ? (
+            {!activeMenu ? (
                 <NavButton 
                     title='Menu' 
                     customFunc={() => {
@@ -47,22 +49,24 @@ function Navbar() {
                     color='blue'
                 />) : (<p></p>)} {/* flex justify-between으로 profile을 우측 정렬하기 위해 비어있는 항목을 남겨둔다 */}
             <div className='flex'>
-                <NavButton 
+                {/* <NavButton 
                     title='chat' 
                     customFunc={() => {
                         handleClick('chat')
                     }}
                     icon={<BsChatLeft />}
                     color='blue'
-                />
-                <NavButton 
+                /> */}
+                {/* <NavButton 
                     title='Notification' 
                     customFunc={() => {
                         handleClick('notification')
                     }}
                     icon={<RiNotification3Line />}
                     color='blue'
-                />
+                /> */}
+
+                {/* TODO: google login 버튼으로 변경, 로그인 로그아웃 가능하도록 */}
                 <TooltipComponent
                     content="Profile"
                     position="BottomCenter"
@@ -70,6 +74,7 @@ function Navbar() {
                     <div
                         className='flex items-center gap-2 cursor-pointer p-1 hover:bg-lightt-gray rounded-lg'
                         onClick={() => handleClick('userProfile')}
+                        id={gapiConfig.GOOGLE_LOGIN_BUTTON_ID}
                     >
                         {avatar ? (
                             <img className='rounded-full w-8 h-8' src={avatar} alt="image"/>
@@ -84,9 +89,11 @@ function Navbar() {
                     </div>
 
                 </TooltipComponent>
-                {isClicked.chat && <Chat/>}
+
+                {/* 클릭시 nav bar에 해당 내용 표시 */}
+                {/* {isClicked.chat && <Chat/>}
                 {isClicked.userProfile && <UserProfile/>}
-                {isClicked.notification && <Notification/>}
+                {isClicked.notification && <Notification/>} */}
                 <div className='flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray rounded-lg'>
                     <NavButton 
                         title='UserProfile' 
