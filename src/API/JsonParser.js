@@ -23,6 +23,12 @@ const findEndOfJSON = (str) => {
     let inString = false;
     let currentChar;
     let currentString = '';
+
+    console.log('findEndOfJSON', str);
+
+    if (!str) {
+      return -1;
+    }
   
     while (index < str.length) {
       currentChar = str[index];

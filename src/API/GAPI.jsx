@@ -284,17 +284,20 @@ export const getCalendarEvents = (gapi, calendarId, callback) => {
   }
 };
 
-export const addCalendarEvent = ({
+export const addCalendarEvent = async ({
   gapi, summary='', location='', description='', 
   start= new Date().toISOString(),
   end= new Date().toISOString(), 
   calendarId}) => {
-    if (start === end)
-    {
-      end = new Date();
-      end.setMinutes(end.getMinutes() + 30);
-      end = end.toISOString();
-    }
+
+  var result = false;
+
+  if (start === end)
+  {
+    end = new Date();
+    end.setMinutes(end.getMinutes() + 30);
+    end = end.toISOString();
+  }
 
   console.log('addCalendarEvent:', summary, location, description, start, end, calendarId);
   var event = {
@@ -312,18 +315,31 @@ export const addCalendarEvent = ({
   }
 
   if (gapi.current.client.getToken()) {
-    var request = gapi.current.client.calendar.events.insert(
-      {
-        calendarId: calendarId,
-        resource: event,
-      }
-    );
+    await new Promise((resolve) => {
+      var request = gapi.current.client.calendar.events.insert(
+        {
+          calendarId: calendarId,
+          resource: event,
+        }
+      );
     
-    request.execute(event => {
-      console.log(event)
-    });
+      request.execute(event => {
+        console.log(event)
+        if (event.status == 'confirmed') {
+          console.log(event.status);
+          result = true;
+          resolve();
+        }
+      })
+    }, 10000); // -> promise
+
+    console.log(result);
+
   } else {
     console.log("addCalendarEvent: token is null");
   }
+
+  console.log('addCalendarEvent result',result);
+  return result;
 };
 

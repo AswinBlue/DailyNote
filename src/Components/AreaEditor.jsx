@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 
-const AreaEditor = ({ title, onChange }) => {
+const AreaEditor = ({ title, value, onChange }) => {
   const textareaRef = useRef(null);
 
   const handleContentResize = () => {
@@ -19,6 +19,7 @@ const AreaEditor = ({ title, onChange }) => {
           type='textarea' 
           ref={textareaRef}
           name={title} 
+          value={value}
           onChange={onChange} 
           onBlur={onChange} 
           onInput={handleContentResize}  // 높이를 글자 크기에 맞게 설정
