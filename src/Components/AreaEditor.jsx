@@ -19,7 +19,7 @@ const AreaEditor = ({ title, value, onChange }) => {
           type='textarea' 
           ref={textareaRef}
           name={title} 
-          value={value}
+          value={value?value:''}
           onChange={onChange} 
           onBlur={onChange} 
           onInput={handleContentResize}  // 높이를 글자 크기에 맞게 설정

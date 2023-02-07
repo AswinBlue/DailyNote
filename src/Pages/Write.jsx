@@ -1,7 +1,9 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { useLocation } from "react-router-dom";
+
 import { HtmlEditor, Image, Inject, Link, QuickToolbar, RichTextEditorComponent, Toolbar } from '@syncfusion/ej2-react-richtexteditor';
-import { useGapiContext, addCalendarEvent, getCalendarList, createCalendar, gapiConfig } from '../API/GAPI';
-import { Header, LineEditor, AreaEditor, SimpleButton, RadioButton } from '../Components'
+import { useGapiContext, addCalendarEvent, getCalendarList, createCalendar, gapiConfig, getCalendarEvents } from '../API/GAPI';
+import { Header, LineEditor, AreaEditor, SimpleButton, RadioButton, DateSelector } from '../Components'
 
 // consts for gapi
 const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
@@ -11,7 +13,12 @@ const Write = () => {
   const [descriptionValue, setDescriptionValue] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
 
-  const {gapi, setGapi, gapiLoggedIn, setgapiLoggedIn} = useGapiContext()
+  const location = useLocation();
+  const { param_eventId } = new URLSearchParams(location.search);
+  // TODO : erase this
+  // sample : vsv58mq7ps61c13vvqrn7i57i0
+
+  const {gapi, setGapi, isSignedIn, setIsSignedIn} = useGapiContext()
   const infoRef = useRef(null);
 
   const score_fields = ["Today's mood"];
@@ -19,6 +26,14 @@ const Write = () => {
   score_fields.forEach(element => {
     score[element] = "50"  // RadioButton 의 default 선택된 값
   });
+
+  // things to do first
+  useEffect(() => {
+    if (param_eventId) {
+      loadData();
+    }
+  }, [isSignedIn])
+  
   
 
   // get input texts from html
@@ -36,15 +51,14 @@ const Write = () => {
     }
   };
 
+  const onDateChange = (selectedDate) => {
+    console.log('onDateChange:', selectedDate);
+  };
+
   const onRadioChange = (name, value) => {
     score[name] = value;
     console.log('score:', score);
   };
-
-  const onInfoPopupChange = () => {
-    setShowInfo(false);
-    console.log(showInfo)
-  }
 
   // submit button
   // TODO: submit 버튼 클릭시 팝업 호출 및 중복 적용 안되도록 수정
@@ -104,10 +118,32 @@ const Write = () => {
     }); // -> getCalendarList
   };
 
+  const loadData = () => {
+    // load calendars to compose page
+    getCalendarList(gapi, async (event) => {
+        // things to do after getting lists
+        event.items.map(item => {
+          if (item.summary == CALENDAR_NAME) {
+            console.log('calendarId =', item.id);
+            getCalendarEvents(gapi, item.id, (response) => {
+              response.items.map(a_event => {
+                if (a_event.items.id == param_eventId) {
+                  console.log('event:', a_event.summary, a_event.description)
+                  setSummaryValue(a_event.summary);
+                  setDescriptionValue(a_event.description);
+                }
+              });
+            });  //-> getCalendarEvents
+          }
+        });  //-> map
+    });  //-> getCalendarList
+  }
+
   return (
     <div className='m-10 p-10 bg-white rounded-3xl'>
       <Header category="Diary" title="Write"/>
       <LineEditor title='Summary' value={summaryValue} onChange={onTextChange}/>
+      <DateSelector onDateChange={onDateChange}/>
       <AreaEditor title='Description' value={descriptionValue} onChange={onTextChange}/>
       {score_fields.map((element, index) => {
         console.log('radiobutton', element);

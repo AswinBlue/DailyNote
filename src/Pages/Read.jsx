@@ -66,6 +66,7 @@ const Read = () => {
             var totalData = [];
             console.log('calendarId =', item.id);
             getCalendarEvents(gapi, item.id, (response) => {
+              console.log('events:',response);
               response.items.map(a_event => {
                 // TODO : 데이터 더 세분화 하기
                 var json_meta_data, body_data = parseJson(a_event.description)

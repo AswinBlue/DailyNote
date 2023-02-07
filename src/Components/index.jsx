@@ -19,5 +19,6 @@ export { default as AreaEditor } from './AreaEditor';
 export { default as AddableList } from './AddableList';
 export { default as RadioButton } from './RadioButton';
 export { default as InfoPopup } from './InfoPopup';
+export { default as DateSelector } from './DateSelector';
 
 // export all components
