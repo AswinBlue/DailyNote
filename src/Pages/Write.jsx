@@ -14,7 +14,7 @@ const Write = () => {
   const [showInfo, setShowInfo] = useState(false);
 
   const location = useLocation();
-  const { param_eventId } = new URLSearchParams(location.search);
+  const url_param = new URLSearchParams(window.location.search);
   // TODO : erase this
   // sample : vsv58mq7ps61c13vvqrn7i57i0
 
@@ -29,7 +29,8 @@ const Write = () => {
 
   // things to do first
   useEffect(() => {
-    if (param_eventId) {
+    console.log(url_param);
+    if (url_param.get("eventId")) {
       loadData();
     }
   }, [isSignedIn])
@@ -127,8 +128,8 @@ const Write = () => {
             console.log('calendarId =', item.id);
             getCalendarEvents(gapi, item.id, (response) => {
               response.items.map(a_event => {
-                if (a_event.items.id == param_eventId) {
-                  console.log('event:', a_event.summary, a_event.description)
+                console.log('event:', a_event.summary, a_event.description)
+                if (a_event.id == url_param.get("eventId")) {
                   setSummaryValue(a_event.summary);
                   setDescriptionValue(a_event.description);
                 }
