@@ -8,10 +8,10 @@ export const parseJson = (str) => {
     
     // json 끝 찾기가 실패하면 전체를 string으로 판단
     if (end == -1) {
-        return null, str;
+        return {'metaData':null, 'body':str};
     }
-
-    return JSON.parse(str.slice(0, end + 1)), str.slice(end + 1)
+    
+    return {'metaData': JSON.parse(str.substring(0, end + 1)), 'body': str.substring(end + 1)};
 }
 /**
  * @param {string} str : string data that contains json
@@ -23,8 +23,6 @@ const findEndOfJSON = (str) => {
     let inString = false;
     let currentChar;
     let currentString = '';
-
-    console.log('findEndOfJSON', str);
 
     if (!str) {
       return -1;
@@ -39,10 +37,9 @@ const findEndOfJSON = (str) => {
         if (currentChar === '{' || currentChar === '[') {
           stack.push(currentChar);
         } else if (currentChar === '}' || currentChar === ']') {
+          stack.pop();
           if (stack.length === 0) {
             return index;
-          } else {
-            stack.pop();
           }
         }
       }

@@ -398,3 +398,38 @@ export const updateCalendarEvent = async ({
   console.log('updateCalendarEvent result', result);
   return result;
 };
+
+export const getEventList = (gapi, callback) => {
+  // load calendars to compose page
+  getCalendarList(gapi, async (calendars) => {
+      // things to do after getting lists
+      calendars.items.map(item => {
+        if (item.summary == gapiConfig.CALENDAR_NAME) {
+          console.log('calendarId =', item.id);
+          getCalendarEvents(gapi, item.id, (events) => {
+            callback(events);
+          });  //-> getCalendarEvents
+        }
+      });  //-> map
+  });  //-> getCalendarList
+};
+
+export const getEventById = (gapi, eventId, callback) => {
+  // load calendars to compose page
+  getCalendarList(gapi, async (event) => {
+      // things to do after getting lists
+      event.items.map(item => {
+        if (item.summary == gapiConfig.CALENDAR_NAME) {
+          // console.log('calendarId =', item.id);
+          getCalendarEvents(gapi, item.id, (response) => {
+            response.items.map(a_event => {
+              // console.log('event:', a_event);
+              if (a_event.id == eventId) {
+                callback(a_event);
+              }
+            });
+          });  //-> getCalendarEvents
+        }
+      });  //-> map
+  });  //-> getCalendarList
+};

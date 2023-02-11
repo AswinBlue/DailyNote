@@ -1,23 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { GridComponent, ColumnsDirective, ColumnDirective, Resize, Sort, Search, ContextMenu, Filter, Page, ExcelExport, PdfExport, Edit, Inject } from '@syncfusion/ej2-react-grids';
-import { useGapiContext, getCalendarList, createCalendar, getCalendarEvents, gapiConfig } from '../API/GAPI';
+import { useGapiContext, getEventList, gapiConfig } from '../API/GAPI';
 import { parseJson } from '../API/JsonParser';
 import { Header } from '../Components'
+import { score_fields } from '../Data/configs';
+
 
 const Read = () => {
   const { gapi, setGapi, isSignedIn, setIsSignedIn } = useGapiContext()
   const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
   const [eventsData, setEventsData] = useState([]);
   // table format
-  const eventsGrid = [
-    {
-      headerText: 'created',
-      field: 'created',
-      textAlign: 'Center',
-      width: '120',
-      editType: 'dropdownedit',
-      textAlign: 'Center',
-    },
+  const [eventsGrid, setEventsGrid] = useState([
     {
       headerText: 'summary',
       field: 'summary',
@@ -42,51 +36,54 @@ const Read = () => {
       editType: 'dropdownedit',
       textAlign: 'Center',
     },
-    {
-      headerText: 'end',
-      field: 'end',
-      textAlign: 'Center',
-      width: '120',
-      editType: 'dropdownedit',
-      textAlign: 'Center',
-    },
-  ];
+  ]);
 
-  // 최초 1회만 재 랜더링하도록 useEffect 사용
+  // set grid of the table
   useEffect(() => {
-    loadData();
-  }, [isSignedIn])
+    score_fields.forEach(element => {
+      eventsGrid.push(
+        {
+          headerText: element,
+          field: element,
+          textAlign: 'Center',
+          width: '120',
+          editType: 'dropdownedit',
+          textAlign: 'Center',
+        },
+        );
+      });
+      console.log('eventsGrid:', eventsGrid);
+      setEventsGrid(eventsGrid);
+    }, []);
+    
+  // 로그인 후 1회만 재 랜더링하도록 useEffect 사용
+  useEffect(() => {
+    getEventList(gapi, (events) => {
+      console.log('events:', events);
+      var totalData = [];
+      events.items.map(a_event => {
+        // TODO : 데이터 더 세분화 하기
+        var {metaData, body} = parseJson(a_event.description);
+        console.log('metaData:', metaData);
+        var data = {
+          "summary": a_event.summary,
+          "description": body,
+          "start": a_event.start.dateTime,
+        };
 
-  const loadData = () => {
-    // load calendars to compose page
-    getCalendarList(gapi, async (event) => {
-        // things to do after getting lists
-        event.items.map(item => {
-          if (item.summary == CALENDAR_NAME) {
-            var totalData = [];
-            console.log('calendarId =', item.id);
-            getCalendarEvents(gapi, item.id, (response) => {
-              console.log('events:',response);
-              response.items.map(a_event => {
-                // TODO : 데이터 더 세분화 하기
-                var json_meta_data, body_data = parseJson(a_event.description)
-                var data = {
-                  "created": a_event.created,
-                  "summary": a_event.summary,
-                  "description": body_data,
-                  "start": a_event.start.dateTime,
-                  "end": a_event.end.dateTime,
-                  "metaData": json_meta_data,
-                };
-                totalData.push(data);
-              });
-              console.log('totalData:', totalData);
-              setEventsData(totalData);
-            });  //-> getCalendarEvents
-          }
-        });  //-> map
-    });  //-> getCalendarList
-  }
+        if (metaData) {
+          score_fields.forEach(element => {
+            data[element] = metaData[element];
+          });
+        }
+        totalData.push(data);
+      });
+      console.log('totalData:', totalData);
+      setEventsData(totalData);
+    });
+  }, [isSignedIn]);
+
+  
 
   return (
     // TODO : refresh 버튼 생성
@@ -106,6 +103,7 @@ const Read = () => {
         {/* 컬럼 제목 표시 */}
         <ColumnsDirective>
           {/* 반복문으로 Json에서 데이터 받아와서 사용. dataSource와 item의 field에 맞게 알아서 세팅됨 */}
+          {console.log("gridData", eventsGrid)}
           {eventsGrid.map((item, index) => (
             <ColumnDirective key={index} {...item} />
           ))}

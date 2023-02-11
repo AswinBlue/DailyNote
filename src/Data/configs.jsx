@@ -1,0 +1,1 @@
+export const score_fields = ["Today's mood"];

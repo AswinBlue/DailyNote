@@ -2,8 +2,9 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useLocation } from "react-router-dom";
 
 import { HtmlEditor, Image, Inject, Link, QuickToolbar, RichTextEditorComponent, Toolbar } from '@syncfusion/ej2-react-richtexteditor';
-import { useGapiContext, addCalendarEvent, updateCalendarEvent, getCalendarList, createCalendar, gapiConfig, getCalendarEvents } from '../API/GAPI';
-import { Header, LineEditor, AreaEditor, SimpleButton, RadioButton, DateSelector } from '../Components'
+import { useGapiContext, addCalendarEvent, updateCalendarEvent, getCalendarList, createCalendar, gapiConfig, getEventById } from '../API/GAPI';
+import { Header, LineEditor, AreaEditor, SimpleButton, RadioButton, DateSelector } from '../Components';
+import { score_fields } from '../Data/configs';
 
 // consts for gapi
 const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
@@ -17,22 +18,25 @@ const Write = () => {
 
   const location = useLocation();
   const url_param = new URLSearchParams(window.location.search);
-  // TODO : erase this
-  // sample : vsv58mq7ps61c13vvqrn7i57i0
 
   const {gapi, setGapi, isSignedIn, setIsSignedIn} = useGapiContext()
   const infoRef = useRef(null);
 
-  const score_fields = ["Today's mood"];
   var score = {};
   score_fields.forEach(element => {
     score[element] = "50"  // RadioButton 의 default 선택된 값
   });
 
   // things to do first
-  useEffect(() => {
+  useEffect((a_event) => {
     if (url_param.get("eventId")) {
-      loadData();
+      getEventById(gapi, url_param.get("eventId"), () => {
+        setSummaryValue(a_event.summary);
+        setDescriptionValue(a_event.description);
+        setStartDate(a_event.start.dateTime);
+        setSelectedDate(a_event.start.dateTime);
+        console.log('event:', a_event.summary, a_event.description, a_event.start.dateTime);
+      });
     }
   }, [isSignedIn])
   
@@ -154,30 +158,6 @@ const Write = () => {
       }
     }); // -> getCalendarList
   };
-
-  const loadData = () => {
-    // load calendars to compose page
-    getCalendarList(gapi, async (event) => {
-        // things to do after getting lists
-        event.items.map(item => {
-          if (item.summary == CALENDAR_NAME) {
-            // console.log('calendarId =', item.id);
-            getCalendarEvents(gapi, item.id, (response) => {
-              response.items.map(a_event => {
-                // console.log('event:', a_event);
-                if (a_event.id == url_param.get("eventId")) {
-                  setSummaryValue(a_event.summary);
-                  setDescriptionValue(a_event.description);
-                  setStartDate(a_event.start.dateTime);
-                  setSelectedDate(a_event.start.dateTime);
-                  console.log('event:', a_event.summary, a_event.description, a_event.start.dateTime);
-                }
-              });
-            });  //-> getCalendarEvents
-          }
-        });  //-> map
-    });  //-> getCalendarList
-  }
 
   return (
     <div className='m-10 p-10 bg-white rounded-3xl'>
