@@ -1,8 +1,13 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 const AreaEditor = ({ title, value, onChange }) => {
   const textareaRef = useRef(null);
 
+  // whenever render, check the size
+  useEffect(() => {
+    handleContentResize();
+  });
+  
   const handleContentResize = () => {
     textareaRef.current.style.height = 'auto';
     textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;

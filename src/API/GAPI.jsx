@@ -284,18 +284,20 @@ export const getCalendarEvents = (gapi, calendarId, callback) => {
   }
 };
 
-export const addCalendarEvent = async ({
+export const addCalendarEvent = async (
   gapi, summary='', location='', description='', 
   start= new Date().toISOString(),
   end= new Date().toISOString(), 
-  calendarId}) => {
+  calendarId) => {
 
   var result = false;
 
   if (start === end)
   {
-    end.setMinutes(start.getMinutes() + 30);
-    end = end.toISOString();
+    var s = new Date(start);
+    var e = new Date(end);
+    e.setMinutes(s.getMinutes() + 30);
+    end = e.toISOString();
   }
 
   console.log('addCalendarEvent:', summary, location, description, start, end, calendarId);
@@ -342,16 +344,18 @@ export const addCalendarEvent = async ({
   return result;
 };
 
-export const updateCalendarEvent = async ({
+export const updateCalendarEvent = async (
   gapi, summary, location, description, 
-  start, end, calendarId, eventId}) => {
+  start, end, calendarId, eventId) => {
 
   var result = false;
 
   if (start === end)
   {
-    end.setMinutes(start.getMinutes() + 30);
-    end = end.toISOString();
+    var s = new Date(start);
+    var e = new Date(end);
+    e.setMinutes(s.getMinutes() + 30);
+    end = e.toISOString();
   }
 
   console.log('updateCalendarEvent:', summary, location, description, start, end, calendarId, eventId);

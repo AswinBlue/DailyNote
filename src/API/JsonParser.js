@@ -10,8 +10,8 @@ export const parseJson = (str) => {
     if (end == -1) {
         return {'metaData':null, 'body':str};
     }
-    
-    return {'metaData': JSON.parse(str.substring(0, end + 1)), 'body': str.substring(end + 1)};
+
+    return {'metaData': JSON.parse(str.substring(0, end + 1)), 'body': str.substring(end + 2)};
 }
 /**
  * @param {string} str : string data that contains json

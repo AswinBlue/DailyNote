@@ -62,7 +62,6 @@ const Read = () => {
       console.log('events:', events);
       var totalData = [];
       events.items.map(a_event => {
-        // TODO : 데이터 더 세분화 하기
         var {metaData, body} = parseJson(a_event.description);
         console.log('metaData:', metaData);
         var data = {
