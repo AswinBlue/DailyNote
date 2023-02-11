@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useLocation } from "react-router-dom";
 
 import { HtmlEditor, Image, Inject, Link, QuickToolbar, RichTextEditorComponent, Toolbar } from '@syncfusion/ej2-react-richtexteditor';
-import { useGapiContext, addCalendarEvent, getCalendarList, createCalendar, gapiConfig, getCalendarEvents } from '../API/GAPI';
+import { useGapiContext, addCalendarEvent, updateCalendarEvent, getCalendarList, createCalendar, gapiConfig, getCalendarEvents } from '../API/GAPI';
 import { Header, LineEditor, AreaEditor, SimpleButton, RadioButton, DateSelector } from '../Components'
 
 // consts for gapi
@@ -12,6 +12,8 @@ const Write = () => {
   const [summaryValue, setSummaryValue] = useState(null);
   const [descriptionValue, setDescriptionValue] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [startDate, setStartDate] = useState(null);
 
   const location = useLocation();
   const url_param = new URLSearchParams(window.location.search);
@@ -29,7 +31,6 @@ const Write = () => {
 
   // things to do first
   useEffect(() => {
-    console.log(url_param);
     if (url_param.get("eventId")) {
       loadData();
     }
@@ -44,15 +45,16 @@ const Write = () => {
     // console.log(name, value)
     
     if (name==="Summary") {
-      console.log(summaryValue)
+      // console.log(summaryValue)
       setSummaryValue(value);
     } else if (name === "Description") {
-      console.log(descriptionValue)
+      // console.log(descriptionValue)
       setDescriptionValue(value);
     }
   };
 
-  const onDateChange = (selectedDate) => {
+  const onDateChange = (dateTime) => {
+    setSelectedDate(dateTime);
     console.log('onDateChange:', selectedDate);
   };
 
@@ -75,6 +77,7 @@ const Write = () => {
     var calendarId = '';
     var prefix = JSON.stringify(score) + '\n';
     var description = prefix + descriptionValue;
+
     // check CALENDAR_NAME exist. if not, create one
     getCalendarList(gapi, async (event) => {
       await new Promise((resolve) => {
@@ -97,25 +100,58 @@ const Write = () => {
         }
       }); // -> promise
 
-      // add new event to calendar
-      var result = addCalendarEvent({
-        gapi:gapi,
-        summary:summaryValue, 
-        description:descriptionValue, 
-        calendarId
-      }); // -> addCalendarEvent
-      if (result) {
-        setSummaryValue('');
-        setDescriptionValue('');
-        setShowInfo('');
-        console.log('submitted');
-        setShowInfo('submitted');
-      } else {
-        console.log('failed');
-        setShowInfo('Something wrong. Please try again');
+      console.log('eventId:', url_param.get("eventId"));
+      if (url_param.get("eventId")) {
+        // update event
+        var result = updateCalendarEvent({
+          gapi:gapi,
+          summary:summaryValue, 
+          description:description, 
+          start:selectedDate,
+          end:selectedDate,
+          calendarId:calendarId,
+          eventId:url_param.get("eventId"),
+        }); // -> addCalendarEvent
+
+        // if success, show info data
+        if (result) {
+          setSummaryValue('');
+          setDescriptionValue('');
+          setShowInfo('');
+          console.log('submitted');
+          setShowInfo('submitted');
+        } else {
+          console.log('failed');
+          setShowInfo('Something wrong. Please try again');
+        }
+        infoRef.current.style.transition = 'opacity 8s';  // fade out
+        infoRef.current.style.opacity = 0;  // fade out
       }
-      infoRef.current.style.transition = 'opacity 5s';  // fade out
-      infoRef.current.style.opacity = 0;  // fade out
+      else {
+        // add new event to calendar
+        var result = addCalendarEvent({
+          gapi:gapi,
+          summary:summaryValue, 
+          description:description, 
+          start:selectedDate,
+          end:selectedDate,
+          calendarId
+        }); // -> addCalendarEvent
+
+        // if success, show info data
+        if (result) {
+          setSummaryValue('');
+          setDescriptionValue('');
+          setShowInfo('');
+          console.log('submitted');
+          setShowInfo('submitted');
+        } else {
+          console.log('failed');
+          setShowInfo('Something wrong. Please try again');
+        }
+        infoRef.current.style.transition = 'opacity 8s';  // fade out
+        infoRef.current.style.opacity = 0;  // fade out
+      }
     }); // -> getCalendarList
   };
 
@@ -125,13 +161,16 @@ const Write = () => {
         // things to do after getting lists
         event.items.map(item => {
           if (item.summary == CALENDAR_NAME) {
-            console.log('calendarId =', item.id);
+            // console.log('calendarId =', item.id);
             getCalendarEvents(gapi, item.id, (response) => {
               response.items.map(a_event => {
-                console.log('event:', a_event.summary, a_event.description)
+                // console.log('event:', a_event);
                 if (a_event.id == url_param.get("eventId")) {
                   setSummaryValue(a_event.summary);
                   setDescriptionValue(a_event.description);
+                  setStartDate(a_event.start.dateTime);
+                  setSelectedDate(a_event.start.dateTime);
+                  console.log('event:', a_event.summary, a_event.description, a_event.start.dateTime);
                 }
               });
             });  //-> getCalendarEvents
@@ -144,14 +183,14 @@ const Write = () => {
     <div className='m-10 p-10 bg-white rounded-3xl'>
       <Header category="Diary" title="Write"/>
       <LineEditor title='Summary' value={summaryValue} onChange={onTextChange}/>
-      <DateSelector onDateChange={onDateChange}/>
+      <DateSelector startDate={startDate} onDateChange={onDateChange}/>
       <AreaEditor title='Description' value={descriptionValue} onChange={onTextChange}/>
       {score_fields.map((element, index) => {
         console.log('radiobutton', element);
-        return <RadioButton name={element} onChange={onRadioChange}></RadioButton>
+        return <RadioButton key={index} name={element} onChange={onRadioChange}></RadioButton>
       })}
       <SimpleButton onClick={onSubmit} color='white' bgColor='blue' text='Submit' borderRadius='10px' size='md'/>
-      <p ref={infoRef} className='text-gray-500' style={{ opacity: 1, transition: "opacity 5s" }}>{showInfo}</p>
+      <p ref={infoRef} className='text-blue-600' style={{ opacity: 1, transition: "opacity 8s" }}>{showInfo}</p>
     </div>
   )
 };

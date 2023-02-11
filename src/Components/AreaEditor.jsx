@@ -6,7 +6,12 @@ const AreaEditor = ({ title, value, onChange }) => {
   const handleContentResize = () => {
     textareaRef.current.style.height = 'auto';
     textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    console.log(textareaRef.current.scrollHeight);
+    // console.log(textareaRef.current.scrollHeight);
+  };
+
+  const onValueChange = (event) => {
+    handleContentResize();
+    onChange(event);
   };
 
   return (
@@ -20,8 +25,8 @@ const AreaEditor = ({ title, value, onChange }) => {
           ref={textareaRef}
           name={title} 
           value={value?value:''}
-          onChange={onChange} 
-          onBlur={onChange} 
+          onChange={onValueChange} 
+          onBlur={onValueChange} 
           onInput={handleContentResize}  // 높이를 글자 크기에 맞게 설정
           style={{overflow: 'hidden'}}  // 스크롤바 제거
           className='w-full border-solid border-2 border-gray-500 tracking-normal text-slate-900'/>

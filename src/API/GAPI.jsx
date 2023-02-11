@@ -144,7 +144,7 @@ export const gapiLogin = (tokenClient, isSignedIn) => {
   } else {
     // Skip display of account chooser and consent dialog for an existing session.
     tokenClient.current.requestAccessToken({prompt: ''});
-    console.log('gapiLogin: use existing session')
+    console.log('gapiLogin: use existing session');
   }
 };
 
@@ -294,8 +294,7 @@ export const addCalendarEvent = async ({
 
   if (start === end)
   {
-    end = new Date();
-    end.setMinutes(end.getMinutes() + 30);
+    end.setMinutes(start.getMinutes() + 30);
     end = end.toISOString();
   }
 
@@ -339,7 +338,63 @@ export const addCalendarEvent = async ({
     console.log("addCalendarEvent: token is null");
   }
 
-  console.log('addCalendarEvent result',result);
+  console.log('addCalendarEvent result', result);
   return result;
 };
 
+export const updateCalendarEvent = async ({
+  gapi, summary, location, description, 
+  start, end, calendarId, eventId}) => {
+
+  var result = false;
+
+  if (start === end)
+  {
+    end.setMinutes(start.getMinutes() + 30);
+    end = end.toISOString();
+  }
+
+  console.log('updateCalendarEvent:', summary, location, description, start, end, calendarId, eventId);
+  var event = {
+    'summary': summary,
+    // 'location': {location},  // TODO : set location
+    'description': description,
+    'start': {
+      'dateTime': start,  // TODO : set time
+      'timeZone': ''
+    },
+    'end': {
+      'dateTime': end,
+      'timeZone': ''
+    }
+  }
+
+  if (gapi.current.client.getToken()) {
+    await new Promise((resolve) => {
+      var request = gapi.current.client.calendar.events.update(
+        {
+          calendarId: calendarId,
+          eventId: eventId,
+          resource: event,
+        }
+      );
+    
+      request.execute(event => {
+        console.log(event)
+        if (event.status == 'confirmed') {
+          console.log(event.status);
+          result = true;
+          resolve();
+        }
+      })
+    }, 10000); // -> promise
+
+    console.log(result);
+
+  } else {
+    console.log("updateCalendarEvent: token is null");
+  }
+
+  console.log('updateCalendarEvent result', result);
+  return result;
+};

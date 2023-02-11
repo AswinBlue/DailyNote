@@ -1,53 +1,60 @@
-import { formatString } from "@syncfusion/ej2/gantt";
-import React, { useState } from "react";
+import { select } from "@syncfusion/ej2/base";
+import React, { useEffect, useState } from "react";
 
 /**
  * 
  * @param {function} onDateChange : handler which is called when date changes
  * @returns 
  */
-const DateSelector = ({onDateChange}) => {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [showDropdown, setShowDropdown] = useState(false);
+const DateSelector = ({startDate, onDateChange}) => {
 
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  useEffect(() => {
+      console.log('startdate:', startDate);
+      if (startDate) {
+        setSelectedDate(startDate);
+      }
+    }, [startDate]); 
+  
   function handleDateChange(event) {
-    setSelectedDate(new Date(event.target.value));
+    console.log('handleDateChange:\n', event.target.value, '\n',
+      new Date(event.target.value).toISOString(), '\n',
+      new Date(event.target.value).getTimezoneOffset(), '\n',
+      );
+    setSelectedDate(event.target.value);
     onDateChange(selectedDate);
   }
 
-  function toggleDropdown() {
-    setShowDropdown(!showDropdown);
+  /*
+   * in <input tpye='datetime-local'>, when you pick a time, time is converted as UTC 0
+   * to show your local time, subtract timezone offset before apply to 'input' tag
+   */
+  const utcTimeToLocalTime = (dateTime) => {
+    var date = new Date(dateTime);
+    date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+    const result = date.toISOString().substring(0, 16);
+    console.log('utcTimeToLocalTime:\n', date.toISOString().substring(0, 16));
+    return result;
   }
 
   return (
     <div className="flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-gray-700 dark:text-gray-200  m-2 justify-end">
-      <button onClick={toggleDropdown} className="border-solid border-b-2 border-b-gray-500 tracking-normal text-slate-900">
-        {selectedDate != 'Invalid Date' ? selectedDate.toLocaleString(undefined, {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true
-        }) : 'Select Date'}
-      </button>
       
-        {showDropdown && selectedDate && (
-          <div style={{ position: "absolute" }}>
-            {selectedDate != 'Invalid Date' ?
-              <input
-                type="datetime-local"
-                value={selectedDate.toISOString().substr(0, 16)}
-                onChange={handleDateChange}
-              /> :
-              <input
-                type="datetime-local"
-                value=''
-                onChange={handleDateChange}
-              />
-            }
-          </div>
-        )}
+      <div style={{ position: "absolute" }}>
+        {selectedDate ?
+          <input
+            type="datetime-local"
+            value={utcTimeToLocalTime(selectedDate)}
+            onChange={handleDateChange}
+          /> :
+          <input
+            type="datetime-local"
+            value=''
+            onChange={handleDateChange}
+          />
+        }
+      </div>
     </div>
   );
 }
