@@ -42,6 +42,15 @@ module.exports = {
           'hero-pattern':
             "url('https://i.ibb.co/MkvLDfb/Rectangle-4389.png')",
         },
+        gridTemplateRows: {
+          // Simple 7 row grid
+         '7': 'repeat(7, minmax(0, 1fr))',
+        },
+        gridTemplateColumns: {
+          // 53 size col grid
+          '54': 'repeat(54, minmax(0, 1fr))',
+        }
+        
       },
     },
     plugins: [],

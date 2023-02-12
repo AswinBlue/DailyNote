@@ -3,28 +3,66 @@ import { GoPrimitiveDot } from 'react-icons/go';
 import { IoIosMore } from 'react-icons/io';
 import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
 
-import { Stacked, Pie, SwitchButton, LineChart, StackedChart, SparkLineChart } from '../Components';
+import { Stacked, Pie, SwitchButton, LineChart, StackedChart, SparkLineChart, DailyTable } from '../Components';
 import { earningData, medicalproBranding, recentTransactions, weeklyStats, dropdownData, SparklineAreaData, ecomPieChartData } from '../Data/dummy';
 import { useStateContext } from '../Contexts/ContextProvider';
 
+import { useGapiContext, gapiConfig, getEventList } from '../API/GAPI';
+import { useEffect, useState } from 'react';
+import { parseJson } from '../API/JsonParser';
+import { score_fields } from '../Data/configs';
+
 const DashBoard = () => {
+  const { gapi, setGapi, isSignedIn, setIsSignedIn } = useGapiContext()
+  const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
+  const [eventList, setEventList] = useState(null);
+
+  // 최초 1회만 재 랜더링하도록 useEffect 사용
+  useEffect(() => {
+    getEventList(gapi, (element) => {
+      // 날짜별로 정렬
+      var newEventList = [];
+      element.items.forEach(a_event => {
+        var {metaData, body} = parseJson(a_event.description);
+          var data = {
+            "summary": a_event.summary,
+            "description": body,
+            "start": a_event.start.dateTime,
+          };
+  
+          if (metaData) {
+            score_fields.forEach(element => {
+              data[element] = metaData[element];
+            });
+          }
+        newEventList.push(data);
+      }); // -> forEach
+      setEventList(newEventList);
+    }); // -> getEventList
+  }, [isSignedIn]);
+
   return (
-    <div className='mt-12'>
+    <div className='mt-12 min-w-fit flex-col'>
       {/* 1열 */}
-      <div className='flex flex-wrap lg:flex-nowrap justify-center'>
-        {/* 제목, 설명과 다운로드 버튼 */}
-        <div className='bg-white dark:text-gray-200 dark:bg-secondary-dark-bg h-44 rounded-xl w-full lg:w-80 p-8 pt-9 m-3 bg-hero-pattern bg-no-repeat bg-cover bg-center'>
-          <div className='flex justify-between items-center'>
+      <div className='flex gap-10 justify-center'>
+        {/* 제목, 설명, 7by53 차트, 버튼 */}
+        <div className='bg-white dark:text-gray-200 dark:bg-secondary-dark-bg h-full rounded-xl p-3 m-3 bg-hero-pattern bg-no-repeat bg-cover bg-center'>
+          <div className='flex justify-between items-center mb-3'>
+
             <div>
-              <p className='font-bold text-gray-400'>title</p>
-              <p className='text-2xl'>description</p>
+              <p className='font-bold text-gray-400'>Dialy archives</p>
+              <p className='text-2xl'>Days you recorded</p>
             </div>
           </div>
+
+          <DailyTable eventList={eventList}></DailyTable>
+
           <div className='mt-6'>
-            <SwitchButton color='white' bgColor='blue' text='Download' borderRadius='10px' size='md'/>
+            <SwitchButton color='white' bgColor='blue' text='View Calendar' borderRadius='10px' size='md'/>
           </div>
         </div>
-        {/* 필요한 내용 json으로 작성, 반복문으로 표시 */}
+
+        {/*  필요한 내용 json으로 작성, 반복문으로 표시
         <div className='flex m-3 flex-wrap justify-start gap-1 items-center'>
           {earningData.map((item) => (
             <div
@@ -49,12 +87,13 @@ const DashBoard = () => {
 
             </div>
           ))}
-        </div>
+        </div> 
+        */}
       </div>
 
       {/* 2열 */}
       <div className='flex gap-10 flex-wrap justify-center'>
-        <div className='bg-white dark:text-gray-200 dark:bg-secondary-dark-bg m-3 p-3 rounded-2xl md:w-789'>
+        <div className='bg-white dark:text-gray-200 dark:bg-secondary-dark-bg m-3 p-3 rounded-2xl'>
           {/* 가로 제목들 */}
           <div className='flex justify-between'>
             <p className='font-semibold text-xl'>Recent</p>

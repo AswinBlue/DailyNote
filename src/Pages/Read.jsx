@@ -3,7 +3,7 @@ import { GridComponent, ColumnsDirective, ColumnDirective, Resize, Sort, Search,
 import { useGapiContext, getEventList, gapiConfig } from '../API/GAPI';
 import { parseJson } from '../API/JsonParser';
 import { Header } from '../Components'
-import { score_fields } from '../Data/configs';
+import { score_fields, read_table_grid } from '../Data/configs';
 
 
 const Read = () => {
@@ -11,37 +11,13 @@ const Read = () => {
   const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
   const [eventsData, setEventsData] = useState([]);
   // table format
-  const [eventsGrid, setEventsGrid] = useState([
-    {
-      headerText: 'summary',
-      field: 'summary',
-      textAlign: 'Center',
-      width: '120',
-      editType: 'dropdownedit',
-      textAlign: 'Center',
-    },
-    {
-      headerText: 'description',
-      field: 'description',
-      textAlign: 'Center',
-      width: '120',
-      editType: 'dropdownedit',
-      textAlign: 'Center',
-    },
-    {
-      headerText: 'start',
-      field: 'start',
-      textAlign: 'Center',
-      width: '120',
-      editType: 'dropdownedit',
-      textAlign: 'Center',
-    },
-  ]);
+  const [eventsGrid, setEventsGrid] = useState();
 
   // set grid of the table
   useEffect(() => {
+    var grid = [...read_table_grid];
     score_fields.forEach(element => {
-      eventsGrid.push(
+      grid.push(
         {
           headerText: element,
           field: element,
@@ -52,8 +28,8 @@ const Read = () => {
         },
         );
       });
-      console.log('eventsGrid:', eventsGrid);
-      setEventsGrid(eventsGrid);
+      console.log('eventsGrid:', grid);
+      setEventsGrid(grid);
     }, []);
     
   // 로그인 후 1회만 재 랜더링하도록 useEffect 사용
@@ -103,9 +79,12 @@ const Read = () => {
         <ColumnsDirective>
           {/* 반복문으로 Json에서 데이터 받아와서 사용. dataSource와 item의 field에 맞게 알아서 세팅됨 */}
           {console.log("gridData", eventsGrid)}
-          {eventsGrid.map((item, index) => (
+          {eventsGrid ? eventsGrid.map((item, index) => (
             <ColumnDirective key={index} {...item} />
-          ))}
+            )) : (
+              <div className='text-blue-500'>Login First</div>
+            )
+          }
         </ColumnsDirective>
         {/* 항목들 제일 아래에 페이지 및 기타 조작 버튼을 추가 */}
         <Inject services={[Search, Resize, Sort, ContextMenu, Filter, Page, ExcelExport, PdfExport]} />

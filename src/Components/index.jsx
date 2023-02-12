@@ -20,5 +20,6 @@ export { default as AddableList } from './AddableList';
 export { default as RadioButton } from './RadioButton';
 export { default as InfoPopup } from './InfoPopup';
 export { default as DateSelector } from './DateSelector';
+export { default as DailyTable } from './DailyTable';
 
 // export all components
