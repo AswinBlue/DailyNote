@@ -14,7 +14,7 @@ const Write = () => {
   const [summaryValue, setSummaryValue] = useState(null);
   const [descriptionValue, setDescriptionValue] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [startDate, setStartDate] = useState(null);
 
   const location = useLocation();
@@ -26,9 +26,11 @@ const Write = () => {
   
   // do once
   useEffect( () => {
+    let newScore = {};
     score_fields.map(element => {
-      score[element] = 50  // RadioButton 의 default 선택된 값
+      newScore[element] = 50  // RadioButton 의 default 선택된 값
     });
+    setScore(newScore);
   },[]);
   
   // things to do after login
@@ -71,8 +73,8 @@ const Write = () => {
   };
 
   const onDateChange = (dateTime) => {
+    console.log('onDateChange:', dateTime);
     setSelectedDate(dateTime);
-    console.log('onDateChange:', selectedDate);
   };
 
   const onRadioChange = (name, value) => {
@@ -121,7 +123,7 @@ const Write = () => {
       if (url_param.get("eventId")) {
         // update event
         var result = updateCalendarEvent(gapi, summaryValue, location, description, 
-          selectedDate, selectedDate, calendarId, url_param.get("eventId"));  // -> addCalendarEvent
+          selectedDate, selectedDate, calendarId, url_param.get("eventId"));  // -> updateCalendarEvent
 
         // if success, show info data
         if (result) {
@@ -139,7 +141,7 @@ const Write = () => {
       }
       else {
         // add new event to calendar
-        var result = addCalendarEvent(gapi, summaryValue, description, selectedDate, selectedDate, calendarId); // -> addCalendarEvent
+        var result = addCalendarEvent(gapi, summaryValue, null, description, selectedDate, selectedDate, calendarId); // -> addCalendarEvent
 
         // if success, show info data
         if (result) {

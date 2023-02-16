@@ -50,7 +50,7 @@ const RadioButton = ({key, name, value, onChange}) => {
       }
       return item;
     });
-    console.log(newCheckStatus);
+    console.log('radioChange:', newCheckStatus, e.target);
     setCheckStatus(newCheckStatus);
     onChange(name, e.target.value);
   }

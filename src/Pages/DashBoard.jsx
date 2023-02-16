@@ -16,37 +16,99 @@ const DashBoard = () => {
   const { gapi, setGapi, isSignedIn, setIsSignedIn } = useGapiContext()
   const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
   const [eventList, setEventList] = useState(null);
-
+  const [sparkLineData, setSparkLineData] = useState([]);
+  const [stackedChartData, setStackedChartData] = useState([]);
+  
   // 최초 1회만 재 랜더링하도록 useEffect 사용
   useEffect(() => {
+    if (!isSignedIn) {
+      return;
+    }
     getEventList(gapi, (element) => {
       // 날짜별로 정렬
       var newEventList = [];
-      element.items.forEach(a_event => {
+      var newSparkLineData = [];
+      element.items.forEach((a_event, idx) => {
         var {metaData, body} = parseJson(a_event.description);
-          var data = {
-            "summary": a_event.summary,
-            "description": body,
-            "start": a_event.start.dateTime,
-          };
-  
-          if (metaData) {
-            score_fields.forEach(element => {
-              data[element] = metaData[element];
-            });
-          }
+        var data = {
+          "summary": a_event.summary,
+          "description": body,
+          "start": a_event.start.dateTime,
+        };
+        
+        if (metaData) {
+          score_fields.forEach(fieldName => {
+            let date = new Date(a_event.start.dateTime.substring(0,10))
+            if (metaData[fieldName]) {
+              data[fieldName] = metaData[fieldName];
+              newSparkLineData.push({x:date.getTime(), y:metaData[fieldName]});
+            }
+          });
+        }
         newEventList.push(data);
       }); // -> forEach
+        
+        
+      /* 
+        stackedChartData = [{data:[{x:'one',y:100} dataName:'name1', {x:'two',y:200}]}, {data:[{x:'one',y:0}, {x:'two',y:250}], dataName:'name2'}]
+      */
+      let newStackedChartData = Array(score_fields.length + 1).fill(null).map(() => ({data:[]}));
+      let accum_data = {};
+      newEventList.forEach(element => {
+        let date = new Date(element.start);
+        let month = date.toLocaleString('default', { month: 'long' });
+        
+        // create new array in dictionary if not exist
+        if (!accum_data.hasOwnProperty(month)) {
+          accum_data[month] = Array(score_fields.length + 1).fill(0); // [count, accumedscore1, accumedscore2, ...]
+        }
+
+        accum_data[month][0] += 1; // count
+        // scores
+        score_fields.forEach((fieldName, idx) => {
+          // if data exist, calculate
+          if (element[fieldName]) { 
+            accum_data[month][idx + 1] += parseInt(element[fieldName]);
+          }
+        });
+      }); // -> forEach
+
+      // push data
+      for (const key in accum_data) {
+        if (accum_data[key]) {
+          accum_data[key].forEach((value, idx) => {
+            let average = accum_data[key][0];
+            if (accum_data[key][0] > 0 && idx > 0) {
+              average = value / accum_data[key][0];
+            }
+            newStackedChartData[idx].data.push({x:key, y: (average)}); // average data (sum / count)
+            console.log('stackedChartData:', newStackedChartData);
+          }); // -> forEach
+        }
+      }
+      
+      newStackedChartData[0]['dataName'] = 'count';
+      score_fields.forEach((fieldName, idx) => {
+        newStackedChartData[idx + 1]['dataName'] = fieldName;
+      });
+      
+      console.log('stackedChartData:', newStackedChartData);
+
       setEventList(newEventList);
+      setSparkLineData(newSparkLineData);
+      setStackedChartData(newStackedChartData);
     }); // -> getEventList
   }, [isSignedIn]);
 
+  useEffect(() => {console.log('sparkLineData:', sparkLineData)}, [sparkLineData]);
+  
+
   return (
-    <div className='mt-12 min-w-fit flex-col'>
+    <div className='mt-12 min-w-fit flex flex-col items-start'>
       {/* 1열 */}
-      <div className='flex gap-10 justify-center'>
+      <div className='flex gap-10 w-fit'>
         {/* 제목, 설명, 7by53 차트, 버튼 */}
-        <div className='bg-white dark:text-gray-200 dark:bg-secondary-dark-bg h-full rounded-xl p-3 m-3 bg-hero-pattern bg-no-repeat bg-cover bg-center'>
+        <div className='bg-white dark:text-gray-200 dark:bg-secondary-dark-bg h-full w-full rounded-xl p-3 m-3 bg-hero-pattern bg-no-repeat bg-cover bg-center'>
           <div className='flex justify-between items-center mb-3'>
 
             <div>
@@ -93,38 +155,37 @@ const DashBoard = () => {
 
       {/* 2열 */}
       <div className='flex gap-10 flex-wrap justify-center'>
-        <div className='bg-white dark:text-gray-200 dark:bg-secondary-dark-bg m-3 p-3 rounded-2xl'>
+        <div className='flex bg-white dark:text-gray-200 dark:bg-secondary-dark-bg m-3 rounded-2xl'>
           {/* 가로 제목들 */}
           <div className='flex justify-between'>
-            <p className='font-semibold text-xl'>Recent</p>
+            <p className='font-semibold text-xl m-3'>Daily scores</p>
             <div className='flex items-center gap-4'>
               <p className='flex items-center gap-2 text-gray-600hover:drop-shadow-xl'>
-                <span><GoPrimitiveDot/></span>
-                <span>item1</span>
-                <span>item2</span>
+                {/* <span><GoPrimitiveDot/></span>
+                <span>moods</span> */}
               </p>
             </div>
           </div>
 
-          {/* 본문 표시 영역 */}
-          <div className='mt-10 flex gap-10 flex-nowrap justify-center'>
-            <div className='border-r-1 border-color m-4 pr-10'>
+          {/* 그래프 표시 영역 */}
+          <div className='mt-10 flex gap-10 justify-center'>
+            <div className='flex flex-col justify-center border-r-1 border-color m-4 pr-10'>
               {/* body1 */}
               <div>
                 <p>
                   <span className='text-3xl font-semibold'>
-                    data1
+                    moods
                   </span>
-                  <span className='p-1.5 hover:drop-shadow-xl cursor-pointer rounded-full text-white bg-green-400 ml-3 text-xs'>
+                  {/* <span className='p-1.5 hover:drop-shadow-xl cursor-pointer rounded-full text-white bg-green-400 ml-3 text-xs'>
                     data1-1
-                  </span>
+                  </span> */}
                 </p>
                 <p className='text-gray-500 mt-1'>
-                  data1-2
+                  your daily moods
                 </p>
               </div>
               {/* body2 */}
-              <div className='mt-8'>
+              {/* <div className='mt-8'>
                 <p>
                   <span className='text-3xl font-semibold'>
                     data2
@@ -136,34 +197,44 @@ const DashBoard = () => {
                 <p className='text-gray-500 mt-1'>
                   data2-2
                 </p>
-              </div>
+              </div> */}
               {/* chart 1 */}
-              <div className='mt-5'>
+              <div className='mt-5 w-fit h-fit border-b-1 border-l-1 border-slate-700'>
                 <SparkLineChart 
                   currentColor='blue'
                   id='line-sparkLine'
                   type='Line'
-                  height='80px'
+                  height='120px'
                   width='250px'
-                  data={SparklineAreaData}
+                  data={sparkLineData}
                   color='blue'
+                  lineWidth={1}
+                  board
+                  tooltipSettings={{
+                    visible:false,
+                    trackLineSettings: {
+                        visible:false
+                    }
+                  }}
+                  
                 />
               </div>
               {/* download button */}
-              <div className='mt-10'>
+              {/* <div className='mt-10'>
                 <SwitchButton
                   color='white'
                   bgColor='blue'
                   text='Download'
                   borderRadius='10px'
                 />
-              </div>
+              </div> */}
             </div>
             {/* chart 2 */}
             <div>
               <StackedChart
                 width='320px'
                 height='360px'
+                data={stackedChartData}
               />
             </div>
           </div>
