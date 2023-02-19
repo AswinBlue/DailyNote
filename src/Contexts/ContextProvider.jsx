@@ -4,11 +4,9 @@ import React, { createContext, useContext, useState } from 'react';
 // state 값을 공유할 대상을 ContextProvider component로 wrapping한다.
 const StateContext = createContext();
 
+// navBar button clicked status
 const initialState = {
-    chat: false,
-    chart: false,
     userProfile: false,
-    notification: false,
 }
 
 export const ContextProvider = ({ children }) => {
@@ -18,7 +16,7 @@ export const ContextProvider = ({ children }) => {
 
     // handle whether navbar is clicked
     const handleClick = (clicked) => {
-        setIsClicked({...initialState, [clicked]:true}); // just set true to index of 'clicked'
+        setIsClicked({...initialState, [clicked]:(!isClicked[clicked])}); // switch value of key 'clicked'
     }
 
     return (

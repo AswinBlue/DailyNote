@@ -52,7 +52,7 @@ const DailyTable = ({eventList}) => {
     setChosenX(x);
     setChosenY(y);
     setToolTip(day);
-    console.log('setTooltipPosition', x, y);
+    // console.log('setTooltipPosition', x, y);
   };
 
   const generateChart = () => {

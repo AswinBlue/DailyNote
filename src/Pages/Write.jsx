@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useLocation } from "react-router-dom";
 
 import { HtmlEditor, Image, Inject, Link, QuickToolbar, RichTextEditorComponent, Toolbar } from '@syncfusion/ej2-react-richtexteditor';
-import { useGapiContext, addCalendarEvent, updateCalendarEvent, getCalendarList, createCalendar, gapiConfig, getEventById } from '../API/GAPI';
+import { useGapiContext, gapiConfig } from '../API/GAPI';
+
 import { Header, LineEditor, AreaEditor, SimpleButton, RadioButton, DateSelector } from '../Components';
 import { parseJson } from '../API/JsonParser';
 import { score_fields } from '../Data/configs';
@@ -12,15 +13,16 @@ const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
 
 const Write = () => {
   const [summaryValue, setSummaryValue] = useState(null);
+  
   const [descriptionValue, setDescriptionValue] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [startDate, setStartDate] = useState(null);
-
+  
   const location = useLocation();
   const url_param = new URLSearchParams(window.location.search);
-
-  const {gapi, setGapi, isSignedIn, setIsSignedIn} = useGapiContext()
+  
+  const { isSignedIn, getEventById, getEventList, updateCalendarEvent, addCalendarEvent, getCalendarEvents, createCalendar, getCalendarList, gapiLogout, gapiLogin  } = useGapiContext()
   const infoRef = useRef(null);
   const [score, setScore] = useState({});
   
@@ -36,7 +38,7 @@ const Write = () => {
   // things to do after login
   useEffect(() => {
     if (url_param.get("eventId")) {
-      getEventById(gapi, url_param.get("eventId"), (a_event) => {
+      getEventById(url_param.get("eventId"), (a_event) => {
         var {metaData, body} = parseJson(a_event.description);
         setSummaryValue(a_event.summary);
         setDescriptionValue(body);
@@ -98,7 +100,7 @@ const Write = () => {
     var description = prefix + descriptionValue;
 
     // check CALENDAR_NAME exist. if not, create one
-    getCalendarList(gapi, async (event) => {
+    getCalendarList(async (event) => {
       await new Promise((resolve) => {
         // things to do after getting lists
         event.items.map(item => {
@@ -111,7 +113,7 @@ const Write = () => {
         // if calendar not found
         if (calendarId == '') {
           console.log('calendar not found, create one');
-          createCalendar(gapi, CALENDAR_NAME, (event) => {
+          createCalendar(CALENDAR_NAME, (event) => {
             calendarId = event.id;
             console.log('calendarId =', calendarId);
             resolve();
@@ -122,7 +124,7 @@ const Write = () => {
       console.log('eventId:', url_param.get("eventId"));
       if (url_param.get("eventId")) {
         // update event
-        var result = updateCalendarEvent(gapi, summaryValue, location, description, 
+        var result = updateCalendarEvent(summaryValue, location, description, 
           selectedDate, selectedDate, calendarId, url_param.get("eventId"));  // -> updateCalendarEvent
 
         // if success, show info data
@@ -141,7 +143,7 @@ const Write = () => {
       }
       else {
         // add new event to calendar
-        var result = addCalendarEvent(gapi, summaryValue, null, description, selectedDate, selectedDate, calendarId); // -> addCalendarEvent
+        var result = addCalendarEvent(summaryValue, null, description, selectedDate, selectedDate, calendarId); // -> addCalendarEvent
 
         // if success, show info data
         if (result) {

@@ -7,24 +7,26 @@ import { Stacked, Pie, SwitchButton, LineChart, StackedChart, SparkLineChart, Da
 import { earningData, medicalproBranding, recentTransactions, weeklyStats, dropdownData, SparklineAreaData, ecomPieChartData } from '../Data/dummy';
 import { useStateContext } from '../Contexts/ContextProvider';
 
-import { useGapiContext, gapiConfig, getEventList } from '../API/GAPI';
+import { useGapiContext, gapiConfig } from '../API/GAPI';
+
 import { useEffect, useState } from 'react';
 import { parseJson } from '../API/JsonParser';
-import { score_fields } from '../Data/configs';
+import { score_fields, dashboard_config } from '../Data/configs';
 
 const DashBoard = () => {
-  const { gapi, setGapi, isSignedIn, setIsSignedIn } = useGapiContext()
+  const { isSignedIn, getEventById, getEventList, updateCalendarEvent, addCalendarEvent, getCalendarEvents, createCalendar, getCalendarList, gapiLogout, gapiLogin  } = useGapiContext()
   const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
   const [eventList, setEventList] = useState(null);
   const [sparkLineData, setSparkLineData] = useState([]);
   const [stackedChartData, setStackedChartData] = useState([]);
+
   
   // 최초 1회만 재 랜더링하도록 useEffect 사용
   useEffect(() => {
     if (!isSignedIn) {
       return;
     }
-    getEventList(gapi, (element) => {
+    getEventList((element) => {
       // 날짜별로 정렬
       var newEventList = [];
       var newSparkLineData = [];
@@ -104,9 +106,10 @@ const DashBoard = () => {
   
 
   return (
-    <div className='mt-12 min-w-fit flex flex-col items-start'>
-      {/* 1열 */}
-      <div className='flex gap-10 w-fit'>
+    // <div className='mt-12 min-w-fit flex flex-col items-start flex-grow'>
+    <div className='mt-12 items-start flex-grow w-fit'>
+      {/* 1행 */}
+      <div className='flex gap-10'>
         {/* 제목, 설명, 7by53 차트, 버튼 */}
         <div className='bg-white dark:text-gray-200 dark:bg-secondary-dark-bg h-full w-full rounded-xl p-3 m-3 bg-hero-pattern bg-no-repeat bg-cover bg-center'>
           <div className='flex justify-between items-center mb-3'>
@@ -153,71 +156,73 @@ const DashBoard = () => {
         */}
       </div>
 
-      {/* 2열 */}
-      <div className='flex gap-10 flex-wrap justify-center'>
+      {/* 2행 */}
+      <div className='flex-wrap gap-10'>
         <div className='flex bg-white dark:text-gray-200 dark:bg-secondary-dark-bg m-3 rounded-2xl'>
-          {/* 가로 제목들 */}
-          <div className='flex justify-between'>
-            <p className='font-semibold text-xl m-3'>Daily scores</p>
-            <div className='flex items-center gap-4'>
-              <p className='flex items-center gap-2 text-gray-600hover:drop-shadow-xl'>
-                {/* <span><GoPrimitiveDot/></span>
-                <span>moods</span> */}
-              </p>
-            </div>
-          </div>
-
-          {/* 그래프 표시 영역 */}
-          <div className='mt-10 flex gap-10 justify-center'>
-            <div className='flex flex-col justify-center border-r-1 border-color m-4 pr-10'>
-              {/* body1 */}
-              <div>
-                <p>
-                  <span className='text-3xl font-semibold'>
-                    moods
-                  </span>
-                  {/* <span className='p-1.5 hover:drop-shadow-xl cursor-pointer rounded-full text-white bg-green-400 ml-3 text-xs'>
-                    data1-1
-                  </span> */}
-                </p>
-                <p className='text-gray-500 mt-1'>
-                  your daily moods
+          {/* 1열 */}
+          <div>
+            {/* 제목들 */}
+            <div className='flex justify-between'>
+              <p className='font-semibold text-xl m-3'>Daily scores</p>
+              <div className='flex items-center gap-4'>
+                <p className='flex items-center gap-2 text-gray-600hover:drop-shadow-xl'>
+                  {/* <span><GoPrimitiveDot/></span>
+                  <span>moods</span> */}
                 </p>
               </div>
-              {/* body2 */}
-              {/* <div className='mt-8'>
-                <p>
-                  <span className='text-3xl font-semibold'>
-                    data2
-                  </span>
-                  <span className='p-1.5 hover:drop-shadow-xl cursor-pointer rounded-full text-white bg-green-400 ml-3 text-xs'>
-                    data2-1
-                  </span>
-                </p>
-                <p className='text-gray-500 mt-1'>
-                  data2-2
-                </p>
-              </div> */}
-              {/* chart 1 */}
-              <div className='mt-5 w-fit h-fit border-b-1 border-l-1 border-slate-700'>
-                <SparkLineChart 
-                  currentColor='blue'
-                  id='line-sparkLine'
-                  type='Line'
-                  height='120px'
-                  width='250px'
-                  data={sparkLineData}
-                  color='blue'
-                  lineWidth={1}
-                  board
-                  tooltipSettings={{
-                    visible:false,
-                    trackLineSettings: {
-                        visible:false
-                    }
-                  }}
-                  
-                />
+            </div>
+
+            {/* 그래프 표시 영역 */}
+            <div className='mt-10 flex gap-10 justify-center'>
+              <div className='flex flex-col justify-center border-r-1 border-color m-4 pr-10'>
+                {/* body1 */}
+                <div>
+                  <p>
+                    <span className='text-3xl font-semibold'>
+                      moods
+                    </span>
+                    {/* <span className='p-1.5 hover:drop-shadow-xl cursor-pointer rounded-full text-white bg-green-400 ml-3 text-xs'>
+                      data1-1
+                    </span> */}
+                  </p>
+                  <p className='text-gray-500 mt-1'>
+                    your daily moods
+                  </p>
+                </div>
+                {/* body2 */}
+                {/* <div className='mt-8'>
+                  <p>
+                    <span className='text-3xl font-semibold'>
+                      data2
+                    </span>
+                    <span className='p-1.5 hover:drop-shadow-xl cursor-pointer rounded-full text-white bg-green-400 ml-3 text-xs'>
+                      data2-1
+                    </span>
+                  </p>
+                  <p className='text-gray-500 mt-1'>
+                    data2-2
+                  </p>
+                </div> */}
+                {/* chart 1 */}
+                <div className='mt-5 w-fit h-fit border-b-1 border-l-1 border-slate-700 min-w-0 max-w-fit'>
+                  <SparkLineChart 
+                    currentColor='blue'
+                    id='line-sparkLine'
+                    type='Line'
+                    height={dashboard_config.sparkLineChart.height}
+                    width={dashboard_config.sparkLineChart.width}
+                    data={sparkLineData}
+                    color='blue'
+                    lineWidth={1}
+                    board
+                    tooltipSettings={{
+                      visible:false,
+                      trackLineSettings: {
+                          visible:false
+                      }
+                    }}
+                  />
+                </div>
               </div>
               {/* download button */}
               {/* <div className='mt-10'>
@@ -229,19 +234,25 @@ const DashBoard = () => {
                 />
               </div> */}
             </div>
+          </div>
+
+          {/* 2열 */}
+          <div className='flex-col'>
+            {/* 제목들 */}
+            <div className='flex justify-between pb-5'>
+              <p className='font-semibold text-xl m-3'>Monthly average</p>
+            </div>
             {/* chart 2 */}
-            <div>
+            <div className='pb-10 pr-10'>
               <StackedChart
-                width='320px'
-                height='360px'
+                width={dashboard_config.stackedChart.width}
+                height={dashboard_config.stackedChart.height}
                 data={stackedChartData}
               />
             </div>
           </div>
-          
         </div>
       </div>
-
     </div>
   )
 }

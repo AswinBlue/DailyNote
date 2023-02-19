@@ -10,6 +10,7 @@ import { MdOutlineCancel } from 'react-icons/md';
 
 import { sidebarMenu } from '../Data/SidebarMenu';
 import { useStateContext } from '../Contexts/ContextProvider';
+import { sidebar_active_threshold } from '../Data/configs';
 
 function Sidebar() {
     const { activeMenu, setActiveMenu, screenSize, setScreenSize } = useStateContext();
@@ -19,23 +20,23 @@ function Sidebar() {
     // decide whether keep sidebar or make it closed whenever you click menu
     // close when window size is small though 'activeMenu' is true
     const handleCloseSideBar = () => {
-        if (activeMenu && screenSize <= 900) {
+        if (activeMenu && screenSize <= sidebar_active_threshold) {
             setActiveMenu(false);
         }
-    }
-
+    }    
+    
     // check window size whenever rerendered
     useEffect(() => {
         const handleResize = () => setScreenSize(window.innerWidth); // function which set screenSize as window size
         handleResize();
         window.addEventListener('resize', handleResize); // track 'resize' options with 'handleResize' function
-        return () => window.removeEventListener('resize', handleResize);
+        return (() => window.removeEventListener('resize', handleResize));
     }, []);
-
+    
     // to decide whether show sidebar or not
     useEffect(() => {
       return () => {
-        if (screenSize <= 900) {
+        if (screenSize <= sidebar_active_threshold) {
             setActiveMenu(false);
         } else {
             setActiveMenu(true);

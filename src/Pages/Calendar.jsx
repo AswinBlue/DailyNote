@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { useGapiContext, getCalendarList, createCalendar, getCalendarEvents, gapiConfig } from '../API/GAPI';
+import { useGapiContext, gapiConfig } from '../API/GAPI';
+
 
 import { ScheduleComponent, ViewsDirective, ViewDirective, Day, Week, Month, Year, Agenda, Inject, Resize, DragAndDrop } from '@syncfusion/ej2-react-schedule';
 import { Header } from '../Components';
 const Calendar = () => {
-  const { gapi, setGapi, gapiLoggedIn, setgapiLoggedIn } = useGapiContext()
+  const { isSignedIn, getEventById, getEventList, updateCalendarEvent, addCalendarEvent, getCalendarEvents, createCalendar, getCalendarList, gapiLogout, gapiLogin  } = useGapiContext()
   const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
   const [eventsData, setEventsData] = useState([]);
   // 최초 1회만 재 랜더링하도록 useEffect 사용
@@ -14,13 +15,13 @@ const Calendar = () => {
 
   const loadData = () => {
     // load calendars to compose page
-    getCalendarList(gapi, async (event) => {
+    getCalendarList(async (event) => {
         // things to do after getting lists
         event.items.map(item => {
           if (item.summary == CALENDAR_NAME) {
             var totalData = [];
             console.log('calendarId =', item.id);
-            getCalendarEvents(gapi, item.id, (response) => {
+            getCalendarEvents(item.id, (response) => {
               response.items.map(a_event => {
                 // TODO : 데이터 더 세분화 하기
                 var data = {

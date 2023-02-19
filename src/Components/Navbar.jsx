@@ -8,7 +8,8 @@ import { CgProfile } from 'react-icons/cg';
 import { Chat, Notification, UserProfile } from '.';
 import { useStateContext } from '../Contexts/ContextProvider';
 import { MdKeyboardArrowDown } from 'react-icons/md';
-import { gapiConfig } from '../API/GAPI';
+import { useGapiContext, gapiConfig } from '../API/GAPI';
+import { sidebar_active_threshold } from '../Data/configs';
 
 
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
@@ -22,32 +23,33 @@ const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
         >
             <span style={{ background: dotColor }}
                 className='absolute inline-flex rounded-full h-2 w-2 right-2 top-2'
-            >
-                {icon}
-            </span>
-
+            />
+            {icon}
         </button>
     </TooltipComponent>
 );
 
 function Navbar() {
     const { activeMenu, setActiveMenu, isClicked, setIsClicked, handleClick, screenSize, setScreenSize } = useStateContext();
-    const userName = "USER"; // TODO : replace this
+    const { isSignedIn, getEventById, getEventList, updateCalendarEvent, addCalendarEvent, getCalendarEvents, createCalendar, getCalendarList, gapiLogout, gapiLogin  } = useGapiContext()
+
+    const userName = "";
     const avatar = null;
-
-
     
     return (
-        <div className='flex justify-between p-2 md:mx-6 relative'>
+        <div className='flex justify-between p-2 mx-6 relative'>
+            {/* sideBar open button / visible when side bar is closed */}
             {!activeMenu ? (
                 <NavButton 
                     title='Menu' 
                     customFunc={() => {
-                        setActiveMenu((prev) => !prev)
+                        setActiveMenu((prev) => !prev);
                     }}
                     icon={<AiOutlineMenu />}
                     color='blue'
                 />) : (<p></p>)} {/* flex justify-between으로 profile을 우측 정렬하기 위해 비어있는 항목을 남겨둔다 */}
+            
+            {/* icons in navbar */}
             <div className='flex'>
                 {/* <NavButton 
                     title='chat' 
@@ -73,8 +75,10 @@ function Navbar() {
                 >
                     <div
                         className='flex items-center gap-2 cursor-pointer p-1 hover:bg-lightt-gray rounded-lg'
-                        onClick={() => handleClick('userProfile')}
-                        id={gapiConfig.GOOGLE_LOGIN_BUTTON_ID}
+                        onClick={() => {
+                                handleClick('userProfile');
+                            }
+                        }
                     >
                         {avatar ? (
                             <img className='rounded-full w-8 h-8' src={avatar} alt="image"/>
@@ -83,7 +87,7 @@ function Navbar() {
                         )}
                         
                         <p>
-                            <span className='text-gray-400 text-14'>{userName}</span>
+                            <span className='text-gray-400 text-14'>{userName ? userName : "login"}</span>
                         </p>
                         <MdKeyboardArrowDown className='text-gray-400 text-14' />
                     </div>
@@ -92,8 +96,8 @@ function Navbar() {
 
                 {/* 클릭시 nav bar에 해당 내용 표시 */}
                 {/* {isClicked.chat && <Chat/>}
-                {isClicked.userProfile && <UserProfile/>}
                 {isClicked.notification && <Notification/>} */}
+                {isClicked.userProfile && <UserProfile/>}
                 <div className='flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray rounded-lg'>
                     <NavButton 
                         title='UserProfile' 

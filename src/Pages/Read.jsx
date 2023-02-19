@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { GridComponent, ColumnsDirective, ColumnDirective, Resize, Sort, Search, ContextMenu, Filter, Page, ExcelExport, PdfExport, Edit, Inject } from '@syncfusion/ej2-react-grids';
-import { useGapiContext, getEventList, gapiConfig } from '../API/GAPI';
+import { useGapiContext, gapiConfig } from '../API/GAPI';
+
 import { parseJson } from '../API/JsonParser';
 import { Header } from '../Components'
 import { score_fields, read_table_grid } from '../Data/configs';
 
 
 const Read = () => {
-  const { gapi, setGapi, isSignedIn, setIsSignedIn } = useGapiContext()
+  const { isSignedIn, getEventById, getEventList, updateCalendarEvent, addCalendarEvent, getCalendarEvents, createCalendar, getCalendarList, gapiLogout, gapiLogin  } = useGapiContext()
   const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
   const [eventsData, setEventsData] = useState([]);
   // table format
@@ -34,7 +35,7 @@ const Read = () => {
     
   // 로그인 후 1회만 재 랜더링하도록 useEffect 사용
   useEffect(() => {
-    getEventList(gapi, (events) => {
+    getEventList((events) => {
       console.log('events:', events);
       var totalData = [];
       events.items.map(a_event => {
