@@ -9,7 +9,7 @@ import loginIcon from '../Data/icons/btn_google_signin_light_normal_web.png';
 import { userProfileData } from '../Data/dummy';
 
 const UserProfile = ({ avatar }) => {
-    const { isSignedIn, getEventById, getEventList, updateCalendarEvent, addCalendarEvent, getCalendarEvents, createCalendar, getCalendarList, gapiLogout, gapiLogin  } = useGapiContext()
+    const { isSignedIn, getEventById, getEventList, updateCalendarEvent, addCalendarEvent, getCalendarEvents, createCalendar, getCalendarList, gapiLogout, gapiLogin } = useGapiContext()
     const { isClicked, tokenClient, setIsClicked } = useStateContext();
 
     const [userName, setUserName] = useState(null);
@@ -32,6 +32,7 @@ const UserProfile = ({ avatar }) => {
                 />
             </div>
             {/* BODY: userIcon & name & so on ... */}
+            {console.log(isSignedIn)}
             {isSignedIn ? (
                 // if logged in, show user data
                 <div>

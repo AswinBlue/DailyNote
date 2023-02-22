@@ -12,7 +12,8 @@ export const GAPI = ({ children }) => {
   // 새로고침에도 저장할 내용들은 useRef 사용하여 저장
   const gapi = useRef(null);  // gapi 객체 참조
   const tokenClient = useRef(null); // token 객체
-  const [isSignedIn, setIsSignedIn] = useState(false);  // 화면 refresh 시에도 token을 저장하기 위해 tokenResponse를 저장
+  const accessToken = useRef(null);  // 화면 refresh 시에도 token을 저장하기 위해 tokenResponse를 저장
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   // init gapi client, 최초 1회만 실행
   useEffect(() => {
@@ -21,6 +22,16 @@ export const GAPI = ({ children }) => {
       initGapi();
     }
   }, []);
+
+  // 로그인 상태 갱신
+  useEffect(() => {
+    if (accessToken.current) {
+      setIsSignedIn(true);
+    } else {
+      setIsSignedIn(false);
+    }
+  }, [accessToken.current]);
+  
 
   const initTokenClient = async (callback) => {
     // google api constants
@@ -37,7 +48,8 @@ export const GAPI = ({ children }) => {
           if (tokenResponse.error) {
             console.log('tokenError:', tokenResponse.error);
           } else {
-            setIsSignedIn(tokenResponse.access_token);
+            accessToken.current = tokenResponse.access_token;
+            setIsSignedIn(true);
           }
         }
       });
@@ -97,8 +109,6 @@ export const GAPI = ({ children }) => {
     // wait untill all scripts are loaded
     // REFS: async 함수 안에서 Promise로 비동기 함수들 생성 후 await Promise.all 함수로 모두 완료됨을 체크
     await Promise.all([gapi_script_check, google_script_check]);
-    // login
-    gapiLogin();
   }; // -> initGapi
 
   // 로그인, token client를 통해 access token을 받아옴
@@ -109,7 +119,7 @@ export const GAPI = ({ children }) => {
     }
 
     // if (gapi.current.client.getToken() === null) {
-    if (isSignedIn === null) {
+    if (accessToken.current === null) {
       tokenClient.current.requestAccessToken({prompt: 'consent'});
       console.log('gapiLogin: login with new session')
     } else {
@@ -125,7 +135,7 @@ export const GAPI = ({ children }) => {
       return;
     }
 
-    if (!isSignedIn) {
+    if (!accessToken.current) {
       console.log('not logged in yest');
     }
 
@@ -134,11 +144,11 @@ export const GAPI = ({ children }) => {
     if (token !== null) {
       window.google.accounts.oauth2.revoke(token.access_token);
       gapi.current.client.setToken('');
-      setIsSignedIn(null);
+      accessToken.current = null;
       // reload token
       tokenClient.current = null;
-      initTokenClient(); // reload tokenClient
       console.log('gapi logged out');
+      setIsSignedIn(false);
     }
   }
 
