@@ -126,6 +126,7 @@ export const GAPI = ({ children }) => {
     // wait untill all scripts are loaded
     // REFS: async 함수 안에서 Promise로 비동기 함수들 생성 후 await Promise.all 함수로 모두 완료됨을 체크
     await Promise.all([gapi_script_check, google_script_check]);
+    gapiLogin();
   }; // -> initGapi
 
   // googleId 사용시
@@ -159,9 +160,7 @@ export const GAPI = ({ children }) => {
             return;
           }
           const response = JSON.parse(xhr.responseText);
-          console.log(xhr);
           if (xhr.status === 200) {
-            console.log('resolved');
             resolve(response);
           } else {
             reject(xhr, response);
@@ -170,7 +169,6 @@ export const GAPI = ({ children }) => {
         xhr.send(null);
     }).then(
       (response) => {
-        console.log('newProfile:', response);
         const newProfile = {
           "email": response.email,
           "image":response.picture,
