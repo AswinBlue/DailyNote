@@ -27,11 +27,11 @@ const Read = () => {
           editType: 'dropdownedit',
           textAlign: 'Center',
         },
-        );
-      });
-      console.log('eventsGrid:', grid);
-      setEventsGrid(grid);
-    }, []);
+      );
+    });
+    console.log('eventsGrid:', grid);
+    setEventsGrid(grid);
+  }, []);
     
   // 로그인 후 1회만 재 랜더링하도록 useEffect 사용
   useEffect(() => {

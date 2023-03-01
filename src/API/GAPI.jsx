@@ -9,11 +9,18 @@ export const gapiConfig = {
 export const useGapiContext = () => useContext(GapiContext);
 
 export const GAPI = ({ children }) => {
+  // google api constants
+  const CLIENT_ID = process.env.REACT_APP_CLIENT_ID  // https://console.cloud.google.com/apis/credentials/oauthclient;
+  const SCOPE = "https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
+  const API_KEY = process.env.REACT_APP_GAPI_KEY  // https://console.developers.google.com/apis/credentials;
+  const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
+  const USER_PROFILE_REQUEST_URL = `https://www.googleapis.com/oauth2/v3/userinfo`;
   // 새로고침에도 저장할 내용들은 useRef 사용하여 저장
   const gapi = useRef(null);  // gapi 객체 참조
   const tokenClient = useRef(null); // token 객체
   const accessToken = useRef(null);  // 화면 refresh 시에도 token을 저장하기 위해 tokenResponse를 저장
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const [userProfile, setUserProfile] = useState({});
 
   // init gapi client, 최초 1회만 실행
   useEffect(() => {
@@ -25,6 +32,7 @@ export const GAPI = ({ children }) => {
 
   // 로그인 상태 갱신
   useEffect(() => {
+    console.log('loginStatus:', accessToken.current);
     if (accessToken.current) {
       setIsSignedIn(true);
     } else {
@@ -32,37 +40,34 @@ export const GAPI = ({ children }) => {
     }
   }, [accessToken.current]);
   
-
-  const initTokenClient = async (callback) => {
-    // google api constants
-    const CLIENT_ID = process.env.REACT_APP_CLIENT_ID  // https://console.cloud.google.com/apis/credentials/oauthclient;
-    const SCOPES = "https://www.googleapis.com/auth/calendar";
+  const initTokenClient = async () => {
     console.log('google.accounts.oauth2', window.google.accounts.oauth2)
     if (tokenClient.current === null) {
       tokenClient.current = await window.google.accounts.oauth2.initTokenClient({
         client_id : CLIENT_ID,
-        scope: SCOPES,
+        scope: SCOPE,
         // requestAccessToken 동작 이후 발생할 callback 함수 설정
         callback: (tokenResponse) => {
           console.log('tokenResponse:', tokenResponse);
           if (tokenResponse.error) {
             console.log('tokenError:', tokenResponse.error);
           } else {
-            accessToken.current = tokenResponse.access_token;
+            // when login success
+            if (accessToken.current != tokenResponse.access_token) {
+              accessToken.current = tokenResponse.access_token;
+              getUserProfileData(tokenResponse.access_token);
+            }
             setIsSignedIn(true);
           }
         }
       });
-      callback();
       console.log('tokenClient initiated:', tokenClient.current);
     } // -> if tokenClient
   }
   
   // load google apis by adding script, and login
   const initGapi = async () => {
-    // google api constants
-    const API_KEY = process.env.REACT_APP_GAPI_KEY  // https://console.developers.google.com/apis/credentials;
-    const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
+    
     // load google & gapi script
     const google_script = document.createElement("script");
     google_script.src = "https://accounts.google.com/gsi/client";
@@ -77,7 +82,19 @@ export const GAPI = ({ children }) => {
     let google_script_check = new Promise((resolve) => {
       google_script.onload = async () => {
         // REFS: google is not defined 오류 : html에서는 google.으로 참조하였지만, react에서는 window.google. 으로 참조한다.
-        initTokenClient(resolve);
+        // google calendar api 사용하기 위한 토큰
+        await initTokenClient();
+        
+        // Google ID  로그인 사용
+        // await window.google.accounts.id.initialize({
+        //   client_id: CLIENT_ID,
+        //   scope: SCOPE,
+        //   callback: () => {
+        //     console.log('GOOGLE ID LOGGED IN');
+        //   }
+        // });
+
+        resolve();
       } // -> onload
     });
     
@@ -111,21 +128,80 @@ export const GAPI = ({ children }) => {
     await Promise.all([gapi_script_check, google_script_check]);
   }; // -> initGapi
 
+  // googleId 사용시
+  // const gapiRenderLoginButton = () => {
+  //   if (!window.google) {
+  //     return;
+  //   }
+
+  //   const btn = document.getElementById(gapiConfig.GOOGLE_LOGIN_BUTTON_ID);
+  //   // window.google.accounts.id.prompt()
+  //   console.log(btn, 'on');
+  //   new Promise((resolve) => {
+  //     window.google.accounts.id.renderButton(btn,
+  //       { theme: "outline", size: "large" }  // customization attributes
+  //     ).then(() => {
+  //       console.log('button rendered');
+  //       resolve();
+  //     })
+  //   });
+  //   console.log('button rendered2');
+  // };
+  
+  const getUserProfileData = (accessToken) => {
+    new Promise((resolve, reject) => {
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', USER_PROFILE_REQUEST_URL);
+        xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
+        xhr.setRequestHeader('Content-Type', "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState !== 4) {
+            return;
+          }
+          const response = JSON.parse(xhr.responseText);
+          console.log(xhr);
+          if (xhr.status === 200) {
+            console.log('resolved');
+            resolve(response);
+          } else {
+            reject(xhr, response);
+          }
+        };
+        xhr.send(null);
+    }).then(
+      (response) => {
+        console.log('newProfile:', response);
+        const newProfile = {
+          "email": response.email,
+          "image":response.picture,
+          "name": response.name,
+        };
+        console.log('newProfile:', newProfile);
+        setUserProfile(newProfile);
+      },
+      (errorMessage) => {
+        console.log(errorMessage);
+      }
+    );
+} 
+
   // 로그인, token client를 통해 access token을 받아옴
   const gapiLogin = () => {
-    if (tokenClient.current === null) {
-        console.log('gapiLogin: api not loaded yet');
+    if (!tokenClient.current || !gapi.current) {
+        console.log('gapiLogin: api not loaded yet', tokenClient.current);
       return;
     }
 
     // if (gapi.current.client.getToken() === null) {
-    if (accessToken.current === null) {
-      tokenClient.current.requestAccessToken({prompt: 'consent'});
-      console.log('gapiLogin: login with new session')
-    } else {
+    // if (gapi.current.client.getToken() === null) {
+    //   tokenClient.current.requestAccessToken({prompt: 'consent'});
+    //   tokenClient.current.requestAccessToken({prompt: 'consent'});
+    //   console.log('gapiLogin: login with new session')
+    // } else 
+    {
       // Skip display of account chooser and consent dialog for an existing session.
       tokenClient.current.requestAccessToken({prompt: ''});
-      console.log('gapiLogin: use existing session');
+      // console.log('gapiLogin: use existing session');
     }
   };
 
@@ -142,13 +218,14 @@ export const GAPI = ({ children }) => {
     const token = gapi.current.client.getToken();
     console.log(token);
     if (token !== null) {
-      window.google.accounts.oauth2.revoke(token.access_token);
-      gapi.current.client.setToken('');
-      accessToken.current = null;
-      // reload token
-      tokenClient.current = null;
-      console.log('gapi logged out');
-      setIsSignedIn(false);
+      window.google.accounts.oauth2.revoke(token.access_token,
+        (done) => {
+          gapi.current.client.setToken('');
+          accessToken.current = null;
+          setIsSignedIn(false);
+          console.log('logout');
+        }
+      );
     }
   }
 
@@ -470,6 +547,7 @@ export const GAPI = ({ children }) => {
           getCalendarList,
           gapiLogout,
           gapiLogin,
+          userProfile,
       })}
     >
       {children}

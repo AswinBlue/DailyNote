@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdOutlineCancel } from 'react-icons/md';
 import SimpleButton from './SimpleButton';
 import { useGapiContext, gapiConfig } from '../API/GAPI';
@@ -9,16 +9,28 @@ import loginIcon from '../Data/icons/btn_google_signin_light_normal_web.png';
 import { userProfileData } from '../Data/dummy';
 
 const UserProfile = ({ avatar }) => {
-    const { isSignedIn, getEventById, getEventList, updateCalendarEvent, addCalendarEvent, getCalendarEvents, createCalendar, getCalendarList, gapiLogout, gapiLogin } = useGapiContext()
-    const { isClicked, tokenClient, setIsClicked } = useStateContext();
+    const { isSignedIn, gapiLogout, gapiLogin, userProfile } = useGapiContext()
+    const { isClicked, setIsClicked } = useStateContext();
 
     const [userName, setUserName] = useState(null);
     const [userEmail, setUserEmail] = useState(null);
+    const [userImage, setUserImage] = useState(null);
+
+    useEffect(() => {
+        // gapiRenderLoginButton();
+    }, []) // 최초 1회
+
+    useEffect(() => {
+       setUserName(userProfile.name);
+       setUserEmail(userProfile.email);
+       setUserImage(userProfile.image);
+       console.log('profileChanged', userProfile);
+    }, [userProfile]);    
 
     return (
-        <div className="nav-item absolute border-1 shadow-md right-1 top-16 bg-white dark:bg-[#525252] p-4 rounded-lg w-64">
+        <div className="nav-item absolute border-1 shadow-md right-1 top-16 bg-white dark:bg-[#525252] p-4 rounded-lg">
             {/* HEAD: title & close button */}
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center w-full">
                 {/* title */}
                 <p className="font-semibold text-lg dark:text-gray-200">{isSignedIn ? "" : "Sign in"}</p>
                 {/* close button */}
@@ -40,8 +52,8 @@ const UserProfile = ({ avatar }) => {
                     <div className="flex gap-5 items-center mt-6 border-color border-b-1 pb-6">
                         <img
                             className="rounded-full h-24 w-24"
-                            src={avatar}
-                            alt="user-profile"
+                            referrerpolicy="no-referrer"
+                            src={userImage}
                         />
                         <div>
                             <p className="font-semibold text-xl dark:text-gray-200"> {userName} </p>
@@ -81,11 +93,17 @@ const UserProfile = ({ avatar }) => {
                 </div>
             ) : (
                 // if not logged in, show login button
+                <>
                 <button 
-                    className='w-full flex items-center justify-center'
-                    onClick={() => {gapiLogin()}}>
+                    className='flex items-center justify-center w-52'
+                    onClick={() => {gapiLogin()}}
+                    >
                     <img className="w-fit" src={loginIcon} alt="Login"/>
                 </button>
+                {/* if use googleId
+                <div id={gapiConfig.GOOGLE_LOGIN_BUTTON_ID}/> 
+                */}
+                </>
             )}
         </div>
 
