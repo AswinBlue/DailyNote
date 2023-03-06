@@ -3,7 +3,7 @@ export { default as Editor } from './Editor';
 export { default as User } from './User';
 export { default as ColorPicker } from './ColorPicker';
 export { default as Calendar } from './Calendar';
-export { default as Read } from './Read';
+export { default as List } from './List';
 export { default as Write } from './Write';
 export { default as Area } from './Charts/Area';
 export { default as Bar } from './Charts/Bar';

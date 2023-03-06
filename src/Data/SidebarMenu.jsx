@@ -6,7 +6,6 @@ import { BiColorFill } from 'react-icons/bi';
 import { RiStockLine } from 'react-icons/ri';
 import { GiLouvrePyramid } from 'react-icons/gi';
 import { SiActigraph } from 'react-icons/si';
-
 export const sidebarMenu = [
     {
       title: 'overview',
@@ -26,7 +25,7 @@ export const sidebarMenu = [
       title: 'DailyNote',
       links: [
         {
-          name: 'read',
+          name: 'list',
           icon: <AiOutlineRead/>,
         },
         {

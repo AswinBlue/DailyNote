@@ -24,7 +24,6 @@ const UserProfile = ({ avatar }) => {
        setUserName(userProfile.name);
        setUserEmail(userProfile.email);
        setUserImage(userProfile.image);
-       console.log('profileChanged', userProfile);
     }, [userProfile]);    
 
     return (

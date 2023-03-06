@@ -58,7 +58,7 @@ function App() {
                 <Route path="/" element={<P.DashBoard />} />
                 <Route path="/dashboard" element={<P.DashBoard />}/>
                 <Route path="/calendar" element={<P.Calendar />}/>
-                <Route path="/read" element={<P.Read />} />
+                <Route path="/list" element={<P.List />} />
                 <Route path="/write" element={<P.Write />} />
               </Routes>
             </div>

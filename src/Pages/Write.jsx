@@ -16,8 +16,8 @@ const Write = () => {
   
   const [descriptionValue, setDescriptionValue] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [startDate, setStartDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date()); //  dateSelector에서 선택한 날짜 데이터
+  const [startDate, setStartDate] = useState(null); // 초기 날짜를 dateSelector에 전달하기위한 변수
   
   const location = useLocation();
   const url_param = new URLSearchParams(window.location.search);
@@ -57,9 +57,14 @@ const Write = () => {
         }
         console.log('event:', summaryValue, descriptionValue, selectedDate, score);
       });
+    } else if (url_param.get("startTime")) {
+      let startTime = new Date(url_param.get("startTime"));
+      console.log('startTime:', startTime);
+      setSelectedDate(startTime);
+      setStartDate(startTime);
     }
   }, [isSignedIn]);
-
+  
   // get input texts from html
   const onTextChange = (event) => {
     const {target: {name, value}} = event
@@ -90,10 +95,8 @@ const Write = () => {
     
     // info 정보창 초기화
     setShowInfo('');
-    console.log(infoRef.current);
     infoRef.current.style.transition = '';  // fade out
     infoRef.current.style.opacity = 1;
-    console.log(infoRef.current);
 
     var calendarId = '';
     var prefix = JSON.stringify(score) + '\n';
@@ -164,7 +167,7 @@ const Write = () => {
 
   return (
     <div className='m-10 p-10 bg-white rounded-3xl'>
-      <Header category="Diary" title="Write"/>
+      <Header category="DailyNote" title="Write"/>
       <LineEditor title='Summary' value={summaryValue} onChange={onTextChange}/>
       <DateSelector startDate={startDate} onDateChange={onDateChange}/>
       <AreaEditor title='Description' value={descriptionValue} onChange={onTextChange}/>

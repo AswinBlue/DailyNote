@@ -23,7 +23,7 @@ const DateSelector = ({startDate, onDateChange}) => {
       new Date(event.target.value).getTimezoneOffset(), '\n',
       );
     setSelectedDate(event.target.value);
-    onDateChange(selectedDate);
+    onDateChange(event.target.value);
   }
 
   /*

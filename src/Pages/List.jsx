@@ -7,7 +7,7 @@ import { Header } from '../Components'
 import { score_fields, read_table_grid } from '../Data/configs';
 
 
-const Read = () => {
+const List = () => {
   const { isSignedIn, getEventById, getEventList, updateCalendarEvent, addCalendarEvent, getCalendarEvents, createCalendar, getCalendarList, gapiLogout, gapiLogin  } = useGapiContext()
   const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
   const [eventsData, setEventsData] = useState([]);
@@ -65,7 +65,7 @@ const Read = () => {
     // TODO : refresh 버튼 생성
     // TODO : 받아올 날짜 설정
     <div className='m-10 p-10 bg-white rounded-3xl'>
-      <Header category='Diary' title='Read' />
+      <Header category='DailyNote' title='List' />
       {/* 표 세팅. 데이터는 json 형태로 받아옴*/}
       <GridComponent
         id='gridcomp'
@@ -75,6 +75,7 @@ const Read = () => {
         Search
         toolbar={['Search']}  // 검색을 위한 툴바 제공
         width='auto'
+        recordClick={{}}
       >
         {/* 컬럼 제목 표시 */}
         <ColumnsDirective>
@@ -94,4 +95,4 @@ const Read = () => {
   )
 }
 
-export default Read
+export default List

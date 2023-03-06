@@ -271,6 +271,33 @@ export const GAPI = ({ children }) => {
     }
   };
 
+  const deleteEvent = (eventId, callback) => {
+    // load calendars to compose page
+    getCalendarList(async (calendars) => {
+      if (!calendars.items) {
+        return;
+      }
+      // things to do after getting lists
+      calendars.items.map(item => {
+        if (!item) {
+          return;
+        }
+        if (item.summary == gapiConfig.CALENDAR_NAME) {
+          console.log('calendarId =', item.id);
+          gapi.current.client.calendar.events.delete({
+            "calendarId": item.id,
+            "eventId": eventId,
+          }).then((response) => {
+            // Handle the results here (response.result has the parsed body).
+            callback(response);
+          }, (err) => {
+            callback(callback);
+          });
+        }
+      }); // -> map
+    });  //-> getCalendarList
+  };
+
   const createCalendar = (name, callback) => {
     if (gapi.current) {
       var request = gapi.current.client.calendar.calendars.insert({summary: name});
@@ -364,7 +391,7 @@ export const GAPI = ({ children }) => {
     calendarId) => {
 
     var result = false;
-
+    
     if (start === end)
     {
       var s = new Date(start);
@@ -372,6 +399,7 @@ export const GAPI = ({ children }) => {
       e.setMinutes(s.getMinutes() + 30);
       end = e.toISOString();
     }
+    console.log(summary, location, description, start, end, calendarId);
 
     console.log('addCalendarEvent:', summary, location, description, start, end, calendarId);
     var event = {
@@ -389,31 +417,27 @@ export const GAPI = ({ children }) => {
     }
 
     if (gapi.current.client.getToken()) {
-      await new Promise((resolve) => {
+      await new Promise((resolve, reject) => {
         var request = gapi.current.client.calendar.events.insert(
           {
             calendarId: calendarId,
             resource: event,
           }
-        );
-      
-        request.execute(event => {
-          console.log(event)
-          if (event.status == 'confirmed') {
-            console.log(event.status);
-            result = true;
-            resolve();
-          }
-        })
+        ).then((response) => {
+          // Handle the results here (response.result has the parsed body).
+          console.log(response);
+          result = true;
+          resolve();
+        }, (err) => {
+          console.log(err);
+          reject();
+        });
       }, 10000); // -> promise
-
-      console.log(result);
-
     } else {
+      // not logged in
       console.log("addCalendarEvent: token is null");
     }
-
-    console.log('addCalendarEvent result', result);
+    console.log('addCalendarEventResult:', result);
     return result;
   };
 
@@ -542,6 +566,7 @@ export const GAPI = ({ children }) => {
           addCalendarEvent,
           getCalendarEvents,
           createCalendar,
+          deleteEvent,
           getCalendarList,
           gapiLogout,
           gapiLogin,

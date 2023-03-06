@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import { AiOutlineMenu } from 'react-icons/ai';
@@ -31,11 +31,15 @@ const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
 
 function Navbar() {
     const { activeMenu, setActiveMenu, isClicked, setIsClicked, handleClick, screenSize, setScreenSize } = useStateContext();
-    const { isSignedIn, getEventById, getEventList, updateCalendarEvent, addCalendarEvent, getCalendarEvents, createCalendar, getCalendarList, gapiLogout, gapiLogin  } = useGapiContext()
-
-    const userName = "";
-    const avatar = null;
+    const { userProfile } = useGapiContext()
+    const [userName, setUserName] = useState(null);
+    const [userImage, setUserImage] = useState(null);
     
+    useEffect(() => {
+        setUserName(userProfile.name);
+        setUserImage(userProfile.image);
+     }, [userProfile]);   
+
     return (
         <div className='flex justify-between p-2 mx-6 relative'>
             {/* sideBar open button / visible when side bar is closed */}
@@ -80,8 +84,8 @@ function Navbar() {
                             }
                         }
                     >
-                        {avatar ? (
-                            <img className='rounded-full w-8 h-8' src={avatar} alt="image"/>
+                        {userImage ? (
+                            <img className='rounded-full w-8 h-8' src={userImage} alt="image"/>
                           ) : (
                             <CgProfile className='rounded-full w-8 h-8'></CgProfile>
                         )}
