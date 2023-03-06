@@ -1,5 +1,5 @@
 import React from 'react'
-import { MdOutlineTitle, MdOutlineCancel, MdModeEditOutline, MdDelete } from 'react-icons/md';
+import { MdOutlineTitle, MdOutlineCancel, MdModeEditOutline, MdDelete, MdRefresh } from 'react-icons/md';
 
 export const PopupHeader = (props, onClick) => {
     return (

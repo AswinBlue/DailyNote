@@ -6,7 +6,6 @@ import * as serviceWorker from './serviceWorker';
 import { ContextProvider } from './Contexts/ContextProvider';
 import { GAPI } from './API/GAPI';
 import { registerLicense } from '@syncfusion/ej2-base';
-
 registerLicense(process.env.SYNCFUSION_API_KEY);
 
 ReactDOM.render(

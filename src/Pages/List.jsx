@@ -75,7 +75,11 @@ const List = () => {
         Search
         toolbar={['Search']}  // 검색을 위한 툴바 제공
         width='auto'
-        recordClick={{}}
+        recordClick={
+          (record) => {
+            console.log("recordClick", record);
+          }
+        }
       >
         {/* 컬럼 제목 표시 */}
         <ColumnsDirective>

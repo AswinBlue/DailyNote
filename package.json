@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@syncfusion/ej2": "^19.4.48",
+    "@syncfusion/ej2-base": "^20.4.51",
+    "@syncfusion/ej2-react-base": "^19.4.38",
     "@syncfusion/ej2-react-calendars": "^19.4.48",
     "@syncfusion/ej2-react-charts": "^19.4.50",
     "@syncfusion/ej2-react-dropdowns": "^19.4.52",
@@ -12,14 +14,13 @@
     "@syncfusion/ej2-react-kanban": "^19.4.48",
     "@syncfusion/ej2-react-popups": "^19.4.52",
     "@syncfusion/ej2-react-richtexteditor": "^19.4.50",
-    "@syncfusion/ej2-react-schedule": "^19.4.50",
-    "google-auth-library": "^8.7.0",
-    "googleapis": "^110.0.0",
+    "@syncfusion/ej2-react-schedule": "^20.3.52",
     "js-cookie": "^3.0.1",
+    "npm": "^9.6.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
-    "react-router-dom": "^6.2.1",
+    "react-router-dom": "^6.8.2",
     "react-scripts": "^5.0.1"
   },
   "scripts": {
