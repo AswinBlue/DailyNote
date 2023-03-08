@@ -1,35 +1,53 @@
 import React from 'react'
-import { MdOutlineTitle, MdOutlineCancel, MdModeEditOutline, MdDelete, MdRefresh } from 'react-icons/md';
 
-export const PopupHeader = (props, onClick) => {
+const Popup = ({children, visible}) => {
     return (
-        <div className="bg-blue-500">
-            {/* button row */}
-            <div className='flex justify-end'>
-                <button onClick={onClick}>
-                    {/* <MdOutlineCancel/> */}
-                </button>
-                <button onClick={onClick}>
-                    {/* <MdModeEditOutline/> */}
-                </button>
-                <button onClick={onClick}>
-                    {/* <MdDelete/> */}
-                </button>
+        visible && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-8 w-3/5 h-4/5">
+                {children}
             </div>
-            {/* title line */}
-            <div className='flex text-white font-bold'>
+        </div>)
+      );
 
-            </div>
-        </div>
-    );
+    // const PopupHeader = () => {
+    //     return (
+    //         <div className="bg-blue-500">
+    //             {/* button row */}
+    //             <div className='flex justify-end'>
+    //                 <button onClick={onButtonClick}>
+    //                     {/* <MdOutlineCancel/> */}
+    //                 </button>
+    //                 <button onClick={onButtonClick}>
+    //                     {/* <MdModeEditOutline/> */}
+    //                 </button>
+    //                 <button onClick={onButtonClick}>
+    //                     {/* <MdDelete/> */}
+    //                 </button>
+    //             </div>
+    //             {/* title line */}
+    //             <div className='flex text-white font-bold'>
+
+    //             </div>
+    //         </div>
+    //     );
+    // }
+
+    // const PopupBody = () => {
+    //     return (
+    //         <div>body</div>
+    //     );
+    // }
+
+    // return (
+    //     <div className='absolute '>
+    //         <PopupHeader></PopupHeader>
+    //         <PopupBody></PopupBody>
+    //     </div>
+    // );
 }
 
-export const PopupBody = (props, onClick) => {
-    return (
-        <div>body</div>
-    );
-}
-
+export default Popup;
 
     // <MdOutlineTitle/>
     // const headerTemplate = (props) => {

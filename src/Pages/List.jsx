@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { GridComponent, ColumnsDirective, ColumnDirective, Resize, Sort, Search, ContextMenu, Filter, Page, ExcelExport, PdfExport, Edit, Inject } from '@syncfusion/ej2-react-grids';
 import { useGapiContext, gapiConfig } from '../API/GAPI';
+import { MdDateRange, MdOutlineCancel, MdModeEditOutline, MdDelete, MdDescription, MdRefresh } from 'react-icons/md';
 
 import { parseJson } from '../API/JsonParser';
-import { Header } from '../Components'
+import { Header, Popup} from '../Components'
 import { score_fields, read_table_grid } from '../Data/configs';
 
 
 const List = () => {
-  const { isSignedIn, getEventById, getEventList, updateCalendarEvent, addCalendarEvent, getCalendarEvents, createCalendar, getCalendarList, gapiLogout, gapiLogin  } = useGapiContext()
+  const { isSignedIn, getEventList, getCalendarEvents, getCalendarList, deleteEvent } = useGapiContext()
   const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
   const [eventsData, setEventsData] = useState([]);
   // table format
   const [eventsGrid, setEventsGrid] = useState();
+  const [showPopup, setshowPopup] = useState(false);
+  const [clickedRecord, setClickedRecord] = useState(null);
+  const navigate = useNavigate();
 
   // set grid of the table
   useEffect(() => {
@@ -35,13 +40,20 @@ const List = () => {
     
   // 로그인 후 1회만 재 랜더링하도록 useEffect 사용
   useEffect(() => {
+    loadData();
+  }, [isSignedIn]);
+
+  useEffect(() => {}, [eventsData]); // to refresh after delete
+
+  const loadData = () => {
     getEventList((events) => {
       console.log('events:', events);
       var totalData = [];
       events.items.map(a_event => {
         var {metaData, body} = parseJson(a_event.description);
-        console.log('metaData:', metaData);
+        // console.log('metaData:', metaData);
         var data = {
+          "eventId": a_event.id,
           "summary": a_event.summary,
           "description": body,
           "start": a_event.start.dateTime,
@@ -57,15 +69,72 @@ const List = () => {
       console.log('totalData:', totalData);
       setEventsData(totalData);
     });
-  }, [isSignedIn]);
-
-  
+  };
 
   return (
-    // TODO : refresh 버튼 생성
     // TODO : 받아올 날짜 설정
+    // TODO: 지우고 화면 refresh
     <div className='m-10 p-10 bg-white rounded-3xl'>
+      {clickedRecord && (
+        <Popup visible={showPopup}>
+          {/* popup header */}
+          <div className="flex justify-between border-b-2 border-slate-500 mb-7 mt-3 pl-2 pr-2">
+            {/* popup title */}
+            <div className='text-xl text-black font-bold'>
+              {clickedRecord.summary}
+            </div>
+            {/* button row */}
+            <div className='flex w-24 justify-between gap-1'>
+              <button className='rounded-xl p-2 bg-gray-100' onClick={() => {
+                navigate('/write?eventId=' + clickedRecord.eventId); // redirect
+              }}>
+                <MdModeEditOutline />
+              </button>
+              <button className='rounded-xl p-2 bg-gray-100' onClick={() => {
+                deleteEvent(clickedRecord.eventId, 
+                  () => {
+                    let newEventsData = [...eventsData];
+                    eventsData.map((item, idx) => {
+                      // console.log(item.eventId , clickedRecord.eventId)
+                      if (item.eventId == clickedRecord.eventId) {
+                        newEventsData.splice(idx, 1); // remove item by index
+                        console.log('delete', idx);
+                        // scheduleRef.current.deleteEvent(idx);
+                      }
+                    }) // -> map
+                    console.log('events', eventsData, newEventsData);
+                    setEventsData(newEventsData);
+                    setClickedRecord(null);
+                    setshowPopup(false);
+                    console.log('event deleted');
+                  }
+                );
+              }}>
+                <MdDelete />
+              </button>
+              <button className='rounded-xl p-2 bg-gray-100' onClick={() => setshowPopup(false)}>
+                <MdOutlineCancel />
+              </button>
+            </div>
+          </div>
+          {/* popup body */}
+          <div className='flex-col'>
+            <div className='flex gap-3'><MdDateRange />{clickedRecord.start.substring(0, 10)}</div>
+            <div className='flex gap-3'><MdDescription />{clickedRecord.description}</div>
+          </div>
+        </Popup>
+      )}
+
       <Header category='DailyNote' title='List' />
+      {/* refresh button */}
+      <button className='flex justify-center w-5 h-5 m-3 rounded-md border-solid border-2 border-slate-400 '
+          onClick={() => {
+            console.log('refresh schedule');
+            loadData();
+          }
+        }>
+        <MdRefresh/>
+      </button>
       {/* 표 세팅. 데이터는 json 형태로 받아옴*/}
       <GridComponent
         id='gridcomp'
@@ -78,13 +147,14 @@ const List = () => {
         recordClick={
           (record) => {
             console.log("recordClick", record);
+            setshowPopup(true);
+            setClickedRecord(record.rowData);
           }
         }
       >
         {/* 컬럼 제목 표시 */}
         <ColumnsDirective>
           {/* 반복문으로 Json에서 데이터 받아와서 사용. dataSource와 item의 field에 맞게 알아서 세팅됨 */}
-          {console.log("gridData", eventsGrid)}
           {eventsGrid ? eventsGrid.map((item, index) => (
             <ColumnDirective key={index} {...item} />
             )) : (

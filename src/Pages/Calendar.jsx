@@ -5,7 +5,6 @@ import { parseJson } from '../API/JsonParser';
 import { ScheduleComponent, ViewsDirective, ViewDirective, Day, Week, Month, Year, Agenda, Inject, Resize, DragAndDrop } from '@syncfusion/ej2-react-schedule';
 import { Header } from '../Components';
 import { score_fields } from '../Data/configs';
-import { PopupHeader, PopupBody } from '../Components/Popup';
 import { MdRefresh } from 'react-icons/md';
 
 const Calendar = () => {
@@ -118,6 +117,7 @@ const Calendar = () => {
   return (
     <div className='m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl'>
       <Header category="App" title="Calendar" />
+      {/* refresh button */}
       <div className='flex justify-end'>
         <button className='flex justify-center w-5 h-5 m-3 rounded-md border-solid border-2 border-slate-400 '
           onClick={() => {
@@ -167,11 +167,12 @@ const Calendar = () => {
                     console.log(scheduleRef.current);
                     let records = scheduleRef.current.getCurrentViewEvents(); 
                     console.log(records);
-                    let newEventsData = eventsData;
+                    let newEventsData = [...eventsData];
                     eventsData.map((item, idx) => {
                       console.log(item.eventId , args.data.eventId)
                       if (item.eventId == args.data.eventId) {
-                        newEventsData.splice(idx, 1);
+                        newEventsData.splice(idx, 1); // remove item by index
+                        console.log('delete', idx);
                         // scheduleRef.current.deleteEvent(idx);
                       }
                     }) // -> map
@@ -199,8 +200,6 @@ const Calendar = () => {
         </ViewsDirective>
         <Inject services={[Week, Month, Year]}/>
       </ScheduleComponent>
-
-      <PopupHeader onClick= {() => {console.log('click')}}/>
     </div>
   )
 }
