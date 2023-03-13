@@ -1,4 +1,5 @@
 {
+  "homepage": "http://aswinblue.github.io/DailyNote",
   "name": "calendar_dashboard",
   "version": "0.1.0",
   "private": true,
@@ -15,6 +16,7 @@
     "@syncfusion/ej2-react-popups": "^19.4.52",
     "@syncfusion/ej2-react-richtexteditor": "^19.4.50",
     "@syncfusion/ej2-react-schedule": "^20.3.52",
+    "gh-pages": "^5.0.0",
     "js-cookie": "^3.0.1",
     "npm": "^9.6.0",
     "react": "^17.0.2",
@@ -24,10 +26,12 @@
     "react-scripts": "^5.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "set \"REACT_APP_ENV=development\" && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "set \"REACT_APP_ENV=PRODUCTION\" && npm run build",
+    "deploy": "set \"REACT_APP_ENV=PRODUCTION\" && gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -49,6 +53,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.2",
+    "dotenv-cli": "^7.1.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jsx-a11y": "^6.5.1",

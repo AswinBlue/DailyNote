@@ -10,9 +10,15 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Router, Routes } from 'react-router-dom';
 import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
+import { Logger } from "./API/Debbugging";
 
 function App() {
   const { activeMenu } = useStateContext();
+  useEffect(() => {
+    if (process.env.REACT_APP_ENV === "STAGING") {
+      Logger(false);
+    }
+  }, []);
   
   return (
     <div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
@@ -6,7 +6,9 @@ import * as serviceWorker from './serviceWorker';
 import { ContextProvider } from './Contexts/ContextProvider';
 import { GAPI } from './API/GAPI';
 import { registerLicense } from '@syncfusion/ej2-base';
-registerLicense(process.env.SYNCFUSION_API_KEY);
+
+// set Syncfusion Key
+registerLicense(process.env.SYNCFUSION_LICENSE_KEY);
 
 ReactDOM.render(
   <React.StrictMode>

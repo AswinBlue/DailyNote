@@ -32,7 +32,7 @@ export const GAPI = ({ children }) => {
 
   // 로그인 상태 갱신
   useEffect(() => {
-    console.log('loginStatus:', accessToken.current);
+    // console.log('loginStatus:', accessToken.current);
     if (accessToken.current) {
       setIsSignedIn(true);
     } else {
@@ -41,7 +41,7 @@ export const GAPI = ({ children }) => {
   }, [accessToken.current]);
   
   const initTokenClient = async () => {
-    console.log('google.accounts.oauth2', window.google.accounts.oauth2)
+    // console.log('google.accounts.oauth2', window.google.accounts.oauth2)
     if (tokenClient.current === null) {
       tokenClient.current = await window.google.accounts.oauth2.initTokenClient({
         client_id : CLIENT_ID,
