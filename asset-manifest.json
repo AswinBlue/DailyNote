@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/DailyNote/static/css/main.617a8aba.css",
+    "main.js": "/DailyNote/static/js/main.51b1a776.js",
+    "static/media/logo.svg": "/DailyNote/static/media/logo.2d27ead7c10f774c5306bcf3c257a728.svg",
+    "index.html": "/DailyNote/index.html",
+    "main.617a8aba.css.map": "/DailyNote/static/css/main.617a8aba.css.map",
+    "main.51b1a776.js.map": "/DailyNote/static/js/main.51b1a776.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.617a8aba.css",
+    "static/js/main.51b1a776.js"
+  ]
+}
