@@ -12,7 +12,6 @@ export const GAPI = ({ children }) => {
   // google api constants
   const CLIENT_ID = process.env.REACT_APP_CLIENT_ID  // https://console.cloud.google.com/apis/credentials/oauthclient;
   const SCOPE = "https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
-  const API_KEY = process.env.REACT_APP_GAPI_KEY  // https://console.developers.google.com/apis/credentials;
   const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
   const USER_PROFILE_REQUEST_URL = `https://www.googleapis.com/oauth2/v3/userinfo`;
   // 새로고침에도 저장할 내용들은 useRef 사용하여 저장
@@ -107,7 +106,6 @@ export const GAPI = ({ children }) => {
           async () => {
             // Auth to google API
             await window.gapi.client.init({
-              apiKey: API_KEY,
               discoveryDocs: DISCOVERY_DOCS,
             });
             gapi.current = window.gapi;
