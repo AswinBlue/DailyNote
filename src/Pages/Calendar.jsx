@@ -19,6 +19,10 @@ const Calendar = () => {
   }, [isSignedIn]);
 
   const loadData = () => {
+    if (!isSignedIn) {
+      // do when logged in
+      return;
+    }
     // load calendars to compose page
     getCalendarList(async (event) => {
         // things to do after getting lists

@@ -92,11 +92,18 @@ const Write = () => {
 
   // submit button
   const onSubmit = () => {
-    
     // info 정보창 초기화
     setShowInfo('');
     infoRef.current.style.transition = '';  // fade out
     infoRef.current.style.opacity = 1;
+    
+    if (!isSignedIn) {
+      // do only when logged in
+      setShowInfo('Login first');
+      infoRef.current.style.transition = 'opacity 8s';  // fade out
+      infoRef.current.style.opacity = 0;  // fade out
+      return;
+    }
 
     var calendarId = '';
     var prefix = JSON.stringify(score) + '\n';

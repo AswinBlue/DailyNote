@@ -8,8 +8,7 @@ import { GAPI } from './API/GAPI';
 import { registerLicense } from '@syncfusion/ej2-base';
 
 // set Syncfusion Key
-registerLicense(process.env.SYNCFUSION_LICENSE_KEY);
-
+registerLicense(process.env.REACT_APP_SYNCFUSION_LICENSE_KEY);
 ReactDOM.render(
   <React.StrictMode>
     <GAPI>
