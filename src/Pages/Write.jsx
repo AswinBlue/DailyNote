@@ -174,7 +174,7 @@ const Write = () => {
 
   return (
     <div className='m-10 p-10 bg-white rounded-3xl'>
-      <Header category="DailyNote" title="Write"/>
+      <Header category={process.env.REACT_APP_PAGE_NAME} title="Write"/>
       <LineEditor title='Summary' value={summaryValue} onChange={onTextChange}/>
       <DateSelector startDate={startDate} onDateChange={onDateChange}/>
       <AreaEditor title='Description' value={descriptionValue} onChange={onTextChange}/>

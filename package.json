@@ -26,12 +26,14 @@
     "react-scripts": "^5.0.1"
   },
   "scripts": {
-    "start": "set \"REACT_APP_ENV=development\" && react-scripts start",
+    "start": "set \"REACT_APP_ENV=development\" && set \"REACT_APP_HOME_PAGE=$homepage\" && react-scripts start",
     "build": "react-scripts --max_old_space_size=4096 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "predeploy": "set \"REACT_APP_ENV=PRODUCTION\" && npm run build",
-    "deploy": "set \"REACT_APP_ENV=PRODUCTION\" && gh-pages -d build"
+    "predeploy": "set \"REACT_APP_ENV=PRODUCTION\" && set \"REACT_APP_HOME_PAGE=$homepage\" && npm run build",
+    "deploy": "set \"REACT_APP_PAGE_NAME=DailyNote\" && gh-pages -d build",
+    "build:postcss":"npx cross-env NODE_ENV=production postcss base.tailwind.css -o target/classes/static/css/tailwind.css",
+    "watch:postcss":"npx cross-env NODE_ENV=production postcss base.tailwind.css -o src/main/resources/static/css/tailwind.css -w"
   },
   "eslintConfig": {
     "extends": [
@@ -59,7 +61,8 @@
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
-    "postcss": "^8.4.6",
+    "postcss": "^8.4.24",
+    "postcss-cli": "^10.1.0",
     "tailwindcss": "^3.1.8"
   }
 }

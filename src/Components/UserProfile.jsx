@@ -21,6 +21,10 @@ const UserProfile = ({ avatar }) => {
     }, []) // 최초 1회
 
     useEffect(() => {
+        // rerender when login status change
+    }, [isSignedIn])
+
+    useEffect(() => {
        setUserName(userProfile.name);
        setUserEmail(userProfile.email);
        setUserImage(userProfile.image);

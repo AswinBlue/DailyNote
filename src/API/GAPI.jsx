@@ -1,4 +1,5 @@
 import React, { useState, useEffect, createContext, useContext, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const GapiContext = createContext();
 export const gapiConfig = {
@@ -9,6 +10,7 @@ export const gapiConfig = {
 export const useGapiContext = () => useContext(GapiContext);
 
 export const GAPI = ({ children }) => {
+  const navigate = useNavigate();
   // google api constants
   const CLIENT_ID = process.env.REACT_APP_CLIENT_ID  // https://console.cloud.google.com/apis/credentials/oauthclient;
   const SCOPE = "https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
@@ -43,8 +45,11 @@ export const GAPI = ({ children }) => {
     // console.log('google.accounts.oauth2', window.google.accounts.oauth2)
     if (tokenClient.current === null) {
       tokenClient.current = await window.google.accounts.oauth2.initTokenClient({
+        // TODO: check it works in mobile
         client_id : CLIENT_ID,
+        redirect_uri : process.env.REACT_APP_HOME_PAGE + "/login",
         scope: SCOPE,
+        ux_mode: 'redirect', // redirect 모드, 별도 정의 없을시 기본 팝업
         // requestAccessToken 동작 이후 발생할 callback 함수 설정
         callback: (tokenResponse) => {
           console.log('tokenResponse:', tokenResponse);
@@ -220,6 +225,7 @@ export const GAPI = ({ children }) => {
           accessToken.current = null;
           setIsSignedIn(false);
           console.log('logout');
+          navigate("/"); // navigate to home
         }
       );
     }

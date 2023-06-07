@@ -15,7 +15,7 @@ import { Logger } from "./API/Debbugging";
 function App() {
   const { activeMenu } = useStateContext();
   useEffect(() => {
-    document.title = "DailyNote";
+    document.title = process.env.REACT_APP_PAGE_NAME;
 
     if (process.env.REACT_APP_ENV === "STAGING") {
       Logger(false);
@@ -64,7 +64,7 @@ function App() {
             <div>
               <Routes>
                 <Route path="/" element={<P.DashBoard />} />
-                <Route path="/DailyNote" element={<P.DashBoard />} />
+                <Route path={"/" + process.env.REACT_APP_PAGE_NAME} element={<P.DashBoard />} />
                 <Route path="/dashboard" element={<P.DashBoard />}/>
                 <Route path="/calendar" element={<P.Calendar />}/>
                 <Route path="/list" element={<P.List />} />

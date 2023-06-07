@@ -125,7 +125,7 @@ const List = () => {
         </Popup>
       )}
 
-      <Header category='DailyNote' title='List' />
+      <Header category={process.env.REACT_APP_PAGE_NAME} title='List' />
       {/* refresh button */}
       <button className='flex justify-center w-5 h-5 m-3 rounded-md border-solid border-2 border-slate-400 '
           onClick={() => {

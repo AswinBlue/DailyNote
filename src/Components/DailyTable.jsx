@@ -108,7 +108,7 @@ const DailyTable = ({eventList}) => {
         </div>
         <div className="w-12"/>
       </div>
-      <text className={"rounded-md bg-white text-xs absolute border-blue-300 py-0.5 px-1 pointer-events-none z-20" + ((chosenX < 0 || chosenY < 0) ? "invisible" : "border-2")}
+      <text className={"rounded-md bg-white text-xs absolute border-blue-300 py-0.5 px-1 pointer-events-none" + ((chosenX < 0 || chosenY < 0) ? "invisible" : "border-2")}
        style={{ top: 12 + chosenY * 12, left: 40 + chosenX * 14.8 }}
        x={chosenX} y={chosenY} dy="0.25em">{toolTip}</text>
     </div>

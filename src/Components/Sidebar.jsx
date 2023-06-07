@@ -23,29 +23,33 @@ function Sidebar() {
         if (activeMenu && screenSize <= sidebar_active_threshold) {
             setActiveMenu(false);
         }
-    }    
+    }
+    const checkSideBarStatus = () => {
+        console.log('why?', screenSize, sidebar_active_threshold);
+
+        if (screenSize <= sidebar_active_threshold) {
+            setActiveMenu(false);
+        } else {
+            setActiveMenu(true);
+        }
+    }
     
     // check window size whenever rerendered
     useEffect(() => {
         const handleResize = () => setScreenSize(window.innerWidth); // function which set screenSize as window size
         handleResize();
+        checkSideBarStatus();
         window.addEventListener('resize', handleResize); // track 'resize' options with 'handleResize' function
         return (() => window.removeEventListener('resize', handleResize));
     }, []);
     
     // to decide whether show sidebar or not
     useEffect(() => {
-      return () => {
-        if (screenSize <= sidebar_active_threshold) {
-            setActiveMenu(false);
-        } else {
-            setActiveMenu(true);
-        }
-      }
-    }, [screenSize])
+        checkSideBarStatus();
+    }, [screenSize]);
 
     return (
-        <div className='ml-3 h-screen overflow-auto md:overflow-hidden md:hover:overflow-auto pb-10'>
+        <div className='ml-3 h-screen overflow-auto md:overflow-hidden md:hover:overflow-auto pb-10 z-10'>
             {activeMenu && (
                 <>
                     <div className='flex justify-between items-center'>
@@ -55,7 +59,7 @@ function Sidebar() {
                             className='items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight dark:text-white text-slate-900'
                         >
                             <SiGooglecalendar/>
-                            <span>DailyNote</span>
+                            <span>{process.env.REACT_APP_PAGE_NAME}</span>
                         </Link>
 
                         <TooltipComponent content='Menu' position='BottomCenter'>

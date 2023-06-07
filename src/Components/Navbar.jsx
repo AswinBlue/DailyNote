@@ -41,7 +41,7 @@ function Navbar() {
      }, [userProfile]);   
 
     return (
-        <div className='flex justify-between p-2 mx-6 relative'>
+        <div className='flex justify-between p-2 mx-6 relative w-auto'>
             {/* sideBar open button / visible when side bar is closed */}
             {!activeMenu ? (
                 <NavButton 
@@ -110,7 +110,6 @@ function Navbar() {
                         }}
                     />
                 </div>
-                
             </div>
         </div>
     )

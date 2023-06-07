@@ -107,7 +107,9 @@ const DashBoard = () => {
 
   return (
     // <div className='mt-12 min-w-fit flex flex-col items-start flex-grow'>
-    <div className='mt-12 items-start flex-grow w-fit'>
+    // <div className='mt-12 items-start flex-grow w-fit'>
+    <div className='m-10 p-10 bg-white rounded-3xl overflow-x-hidden'>
+      
       {/* 1행 */}
       <div className='flex gap-10'>
         {/* 제목, 설명, 7by53 차트, 버튼 */}
@@ -120,7 +122,7 @@ const DashBoard = () => {
             </div>
           </div>
 
-          <DailyTable eventList={eventList}></DailyTable>
+          <DailyTable classNam='overflow-x-auto' eventList={eventList}></DailyTable>
 
           <div className='mt-6'>
             <SwitchButton color='white' bgColor='blue' text='View Calendar' borderRadius='10px' size='md'/>
