@@ -411,7 +411,7 @@ export const GAPI = ({ children }) => {
       // 'location': {location},  // TODO : set location
       'description': description,
       'start': {
-        'dateTime': start,  // TODO : set time
+        'dateTime': start,
         'timeZone': ''
       },
       'end': {
@@ -465,7 +465,7 @@ export const GAPI = ({ children }) => {
       // 'location': {location},  // TODO : set location
       'description': description,
       'start': {
-        'dateTime': start,  // TODO : set time
+        'dateTime': start,
         'timeZone': ''
       },
       'end': {

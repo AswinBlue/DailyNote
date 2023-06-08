@@ -24,8 +24,6 @@ function App() {
   
   return (
     <div>
-      {/* routing을 위한 세팅 */}
-      <BrowserRouter>
       {/* 전체 화면구성 */}
         <div className='flex relative dark:bg-main-dark-bg'>
           {/* 우측 하단에 고정으로 떠있는 버튼 */}
@@ -69,11 +67,11 @@ function App() {
                 <Route path="/calendar" element={<P.Calendar />}/>
                 <Route path="/list" element={<P.List />} />
                 <Route path="/write" element={<P.Write />} />
+                <Route path="/*" element={<P.DashBoard />} />
               </Routes>
             </div>
           </div>
         </div>
-      </BrowserRouter>
     </div>
   );
 }

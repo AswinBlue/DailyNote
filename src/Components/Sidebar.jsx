@@ -25,8 +25,6 @@ function Sidebar() {
         }
     }
     const checkSideBarStatus = () => {
-        console.log('why?', screenSize, sidebar_active_threshold);
-
         if (screenSize <= sidebar_active_threshold) {
             setActiveMenu(false);
         } else {
