@@ -6,6 +6,7 @@ import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
 import { Stacked, Pie, SwitchButton, LineChart, StackedChart, SparkLineChart, DailyTable } from '../Components';
 import { earningData, medicalproBranding, recentTransactions, weeklyStats, dropdownData, SparklineAreaData, ecomPieChartData } from '../Data/dummy';
 import { useStateContext } from '../Contexts/ContextProvider';
+import { useNavigate } from 'react-router-dom';
 
 import { useGapiContext, gapiConfig } from '../API/GAPI';
 
@@ -14,11 +15,18 @@ import { parseJson } from '../API/JsonParser';
 import { score_fields, dashboard_config } from '../Data/configs';
 
 const DashBoard = () => {
+  const navigate = useNavigate();
+  
+  const { screenSize, setScreenSize } = useStateContext();
   const { isSignedIn, getEventById, getEventList, updateCalendarEvent, addCalendarEvent, getCalendarEvents, createCalendar, getCalendarList, gapiLogout, gapiLogin  } = useGapiContext()
   const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
   const [eventList, setEventList] = useState(null);
   const [sparkLineData, setSparkLineData] = useState([]);
   const [stackedChartData, setStackedChartData] = useState([]);
+
+  useEffect(() => {
+    console.log("screenSize:", screenSize);
+  }, [screenSize]);
 
   
   // 최초 1회만 재 랜더링하도록 useEffect 사용
@@ -108,7 +116,7 @@ const DashBoard = () => {
   return (
     // <div className='mt-12 min-w-fit flex flex-col items-start flex-grow'>
     // <div className='mt-12 items-start flex-grow w-fit'>
-    <div className='m-10 p-10 bg-white rounded-3xl overflow-x-hidden'>
+    <div className='m-10 p-10 bg-white rounded-3xl overflow-x-auto'>
       
       {/* 1행 */}
       <div className='flex gap-10'>
@@ -118,14 +126,14 @@ const DashBoard = () => {
 
             <div>
               <p className='font-bold text-gray-400'>Dialy archives</p>
-              <p className='text-2xl'>Days you recorded</p>
+              <p className='text-2xl'>Your Days</p>
             </div>
           </div>
 
           <DailyTable classNam='overflow-x-auto' eventList={eventList}></DailyTable>
 
           <div className='mt-6'>
-            <SwitchButton color='white' bgColor='blue' text='View Calendar' borderRadius='10px' size='md'/>
+            <SwitchButton color='white' bgColor='blue' text='View Calendar' borderRadius='10px' size='md' onClick={() => navigate("/calendar")}/>
           </div>
         </div>
 
@@ -160,12 +168,12 @@ const DashBoard = () => {
 
       {/* 2행 */}
       <div className='flex-wrap gap-10'>
-        <div className='flex bg-white dark:text-gray-200 dark:bg-secondary-dark-bg m-3 rounded-2xl'>
+        <div className='flex sm:flex-row flex-col bg-white dark:text-gray-200 dark:bg-secondary-dark-bg m-3 rounded-2xl'>
           {/* 1열 */}
-          <div>
+          <div className='border-r-1 border-color m-4 pr-10'>
             {/* 제목들 */}
             <div className='flex justify-between'>
-              <p className='font-semibold text-xl m-3'>Daily scores</p>
+              <p className='font-semibold text-2xl m-3'>Daily scores</p>
               <div className='flex items-center gap-4'>
                 <p className='flex items-center gap-2 text-gray-600hover:drop-shadow-xl'>
                   {/* <span><GoPrimitiveDot/></span>
@@ -175,12 +183,12 @@ const DashBoard = () => {
             </div>
 
             {/* 그래프 표시 영역 */}
-            <div className='mt-10 flex gap-10 justify-center'>
-              <div className='flex flex-col justify-center border-r-1 border-color m-4 pr-10'>
+            <div className='flex gap-10'>
+              <div className='flex flex-col justify-center'>
                 {/* body1 */}
                 <div>
                   <p>
-                    <span className='text-3xl font-semibold'>
+                    <span className='text-xl font-semibold'>
                       moods
                     </span>
                     {/* <span className='p-1.5 hover:drop-shadow-xl cursor-pointer rounded-full text-white bg-green-400 ml-3 text-xs'>
@@ -206,24 +214,27 @@ const DashBoard = () => {
                   </p>
                 </div> */}
                 {/* chart 1 */}
-                <div className='mt-5 w-fit h-fit border-b-1 border-l-1 border-slate-700 min-w-0 max-w-fit'>
-                  <SparkLineChart 
-                    currentColor='blue'
-                    id='line-sparkLine'
-                    type='Line'
-                    height={dashboard_config.sparkLineChart.height}
-                    width={dashboard_config.sparkLineChart.width}
-                    data={sparkLineData}
-                    color='blue'
-                    lineWidth={1}
-                    board
-                    tooltipSettings={{
-                      visible:false,
-                      trackLineSettings: {
-                          visible:false
-                      }
-                    }}
-                  />
+                <div className='mt-5 w-fit h-fit border-b-1 border-l-1 border-slate-700 max-w-xl'>
+                  {sparkLineData.length > 0 &&
+                    <SparkLineChart 
+                      currentColor='blue'
+                      id='line-sparkLine'
+                      type='Line'
+                      height={dashboard_config.sparkLineChart.height}
+                      width={dashboard_config.sparkLineChart.width}
+                      // width={screenSize / 2}
+                      data={sparkLineData}
+                      color='blue'
+                      lineWidth={1}
+                      board
+                      tooltipSettings={{
+                        visible:false,
+                        trackLineSettings: {
+                            visible:false
+                        }
+                      }}
+                    />
+                  }
                 </div>
               </div>
               {/* download button */}
@@ -239,18 +250,20 @@ const DashBoard = () => {
           </div>
 
           {/* 2열 */}
-          <div className='flex-col'>
+          <div className='flex-col border-r-1 border-color m-4 pr-10'>
             {/* 제목들 */}
             <div className='flex justify-between pb-5'>
               <p className='font-semibold text-xl m-3'>Monthly average</p>
             </div>
             {/* chart 2 */}
             <div className='pb-10 pr-10'>
-              <StackedChart
+              {stackedChartData.length > 0 &&
+                <StackedChart
                 width={dashboard_config.stackedChart.width}
                 height={dashboard_config.stackedChart.height}
                 data={stackedChartData}
-              />
+                />
+              }
             </div>
           </div>
         </div>

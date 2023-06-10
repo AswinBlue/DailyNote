@@ -12,7 +12,7 @@ const initialState = {
 export const ContextProvider = ({ children }) => {
     const [activeMenu, setActiveMenu] = useState(true); // active state of sidebar menu
     const [isClicked, setIsClicked] = useState(initialState); // click state of navbar menu
-    const [screenSize, setScreenSize] = useState(undefined);
+    const [screenSize, setScreenSize] = useState(0);
 
     // handle whether navbar is clicked
     const handleClick = (clicked) => {

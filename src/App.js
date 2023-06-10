@@ -10,20 +10,32 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Router, Routes } from 'react-router-dom';
 import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
-import { Logger } from "./API/Debbugging";
 
 function App() {
-  const { activeMenu } = useStateContext();
+  const { activeMenu, screenSize, setScreenSize } = useStateContext();
+      
+  // check window size whenever rerendered
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenSize(window.innerWidth); // function which set screenSize as window size
+      console.log(window.innerWidth);
+    }
+    handleResize();
+    window.addEventListener('resize', handleResize); // track 'resize' options with 'handleResize' function
+    return (() => window.removeEventListener('resize', handleResize));
+  }, []);
+
+  // useEffect(() => {
+  //   setScreenSize(window.innerWidth);
+  //   console.log("screenSize:", screenSize, window.innerWidth);
+  // }, []); // only once
+
   useEffect(() => {
     document.title = process.env.REACT_APP_PAGE_NAME;
-
-    if (process.env.REACT_APP_ENV === "STAGING") {
-      Logger(false);
-    }
   }, []);
   
   return (
-    <div>
+    <div className='transform scale-50 md:scale-75 lg:scale-90 xl:scale-100'>
       {/* 전체 화면구성 */}
         <div className='flex relative dark:bg-main-dark-bg'>
           {/* 우측 하단에 고정으로 떠있는 버튼 */}

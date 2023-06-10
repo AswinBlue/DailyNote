@@ -19,6 +19,10 @@ function Sidebar() {
     
     // decide whether keep sidebar or make it closed whenever you click menu
     // close when window size is small though 'activeMenu' is true
+    useEffect(() => {
+        checkSideBarStatus();
+    }, []);
+    
     const handleCloseSideBar = () => {
         if (activeMenu && screenSize <= sidebar_active_threshold) {
             setActiveMenu(false);
@@ -31,15 +35,7 @@ function Sidebar() {
             setActiveMenu(true);
         }
     }
-    
-    // check window size whenever rerendered
-    useEffect(() => {
-        const handleResize = () => setScreenSize(window.innerWidth); // function which set screenSize as window size
-        handleResize();
-        checkSideBarStatus();
-        window.addEventListener('resize', handleResize); // track 'resize' options with 'handleResize' function
-        return (() => window.removeEventListener('resize', handleResize));
-    }, []);
+
     
     // to decide whether show sidebar or not
     useEffect(() => {

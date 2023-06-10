@@ -26,7 +26,7 @@
     "react-scripts": "^5.0.1"
   },
   "scripts": {
-    "start": "set \"REACT_APP_ENV=development\" && set \"REACT_APP_HOME_PAGE=$npm_package_homepage\" && react-scripts start",
+    "start": "set \"REACT_APP_ENV=DEVELOPMENT\" && set \"REACT_APP_HOME_PAGE=$npm_package_homepage\" && react-scripts start",
     "build": "react-scripts --max_old_space_size=4096 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

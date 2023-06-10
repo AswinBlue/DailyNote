@@ -101,7 +101,7 @@ const DailyTable = ({eventList}) => {
           <div className="w-10 h-3 mr-2 text-xs">FRI</div>
           <div className="w-10 h-3 mr-2 text-xs">SAT</div>
         </div>
-        <div className="grid w-800 grid-cols-54 grid-rows-7 grid-flow-col gap-0">
+        <div className="overflow-x-auto grid w-800 grid-cols-54 grid-rows-7 grid-flow-col gap-0">
           {chart && chart.map((square) => {
             return square;
           })}

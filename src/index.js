@@ -7,9 +7,12 @@ import { ContextProvider } from './Contexts/ContextProvider';
 import { GAPI } from './API/GAPI';
 import { BrowserRouter } from 'react-router-dom';
 import { registerLicense } from '@syncfusion/ej2-base';
+import { adjustLogLevel } from './API/Debbugging';
 
 // set Syncfusion Key
 registerLicense(process.env.REACT_APP_SYNCFUSION_LICENSE_KEY);
+adjustLogLevel();
+
 ReactDOM.render(
   <React.StrictMode>
     {/* routing을 위한 세팅 */}

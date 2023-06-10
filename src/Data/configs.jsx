@@ -30,10 +30,10 @@ export const read_table_grid = [
   export const dashboard_config = {
     sparkLineChart : {
       height: '120px',
-      width: '250px',
+      width: '750px',
     },
     stackedChart: {
-      width: '320px',
+      width: '750px',
       height: '360px',
     }
   }
