@@ -6,7 +6,7 @@ import { useGapiContext, gapiConfig } from '../API/GAPI';
 
 import { Header, LineEditor, AreaEditor, SimpleButton, RadioButton, DateSelector } from '../Components';
 import { parseJson } from '../API/JsonParser';
-import { score_fields } from '../Data/configs';
+import { score_field_prefix, score_field_default } from '../Data/configs';
 
 // consts for gapi
 const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
@@ -26,17 +26,39 @@ const Write = () => {
   const infoRef = useRef(null);
   const [score, setScore] = useState({});
   
-  // do once
-  useEffect( () => {
-    let newScore = {};
-    score_fields.map(element => {
-      newScore[element] = 50  // RadioButton 의 default 선택된 값
-    });
-    setScore(newScore);
-  },[]);
-  
   // things to do after login
   useEffect(() => {
+    parseUrl();
+    loadData();
+  }, [isSignedIn]);
+
+  useEffect(() => {
+    // TODO: reload RadioButton when score changes
+    console.log('reload', score);
+  }, []); // score
+
+  /**
+   * load calendar data from gapi, take scoreField
+   */
+  const loadData = () => {
+    getEventList((events) => {
+      console.log('events:', events);
+      var newScore = { ...score};
+      events.items.map(a_event => {
+        var {metaData, body} = parseJson(a_event.description);
+        if (metaData) {
+          Object.entries(metaData).forEach(([key, value]) => {
+            if (key.startsWith(score_field_prefix)) {
+              newScore[key] = value;
+            }
+          });
+        }
+      });
+      console.log('[write] loadData newScore:', newScore);
+      setScore(newScore);
+    });
+  };
+  const parseUrl = () => {
     if (url_param.get("eventId")) {
       getEventById(url_param.get("eventId"), (a_event) => {
         var {metaData, body} = parseJson(a_event.description);
@@ -44,17 +66,19 @@ const Write = () => {
         setDescriptionValue(body);
         setStartDate(a_event.start.dateTime);
         setSelectedDate(a_event.start.dateTime);
-        if (metaData) {
-          console.log(metaData);
-          var newScore = { ...score };
-          Object.entries(metaData).forEach(([key, value]) => {
-            console.log(key, value, score);
-            if (newScore.hasOwnProperty(key)) {
-              newScore[key] = value;
-            }
-          });
-          setScore(newScore);
-        }
+        // if (metaData) {
+        //   console.log(metaData);
+        //   var newScore = { ...score }; // deep copy score
+        //   // for all key,value in json object
+        //   Object.entries(metaData).forEach(([key, value]) => {
+        //     console.log(key, value, score);
+        //     if (newScore.hasOwnProperty(key)) {
+        //       // if key exist, update
+        //       newScore[key] = value;
+        //     }
+        //   });
+        //   setScore(newScore);
+        // }
         console.log('event:', summaryValue, descriptionValue, selectedDate, score);
       });
     } else if (url_param.get("startTime")) {
@@ -63,7 +87,7 @@ const Write = () => {
       setSelectedDate(startTime);
       setStartDate(startTime);
     }
-  }, [isSignedIn]);
+  };
   
   // get input texts from html
   const onTextChange = (event) => {
@@ -85,9 +109,11 @@ const Write = () => {
   };
 
   const onRadioChange = (name, value) => {
-    score[name] = value;
-    console.log('score:', score);
-    setScore(score);
+    if (score.hasOwnProperty(name)) {
+      score[name] = value;
+      console.log('score:', score);
+      setScore(score);
+    }
   };
 
   // submit button
@@ -173,14 +199,17 @@ const Write = () => {
   };
 
   return (
+    // TODO: 점수 항목 추가할수 있게
     <div className='m-10 p-10 bg-white rounded-3xl'>
       <Header category={process.env.REACT_APP_PAGE_NAME} title="Write"/>
       <LineEditor title='Summary' value={summaryValue} onChange={onTextChange}/>
       <DateSelector startDate={startDate} onDateChange={onDateChange}/>
       <AreaEditor title='Description' value={descriptionValue} onChange={onTextChange}/>
-      {score && Object.entries(score).map(([key, value], index) => (
-         <RadioButton key={index} name={key} value={value} onChange={onRadioChange}></RadioButton>
-      ))}
+      {score && Object.entries(score).map(([key, value], index) => {
+          // remove score_field_prefix from key
+          key = key.slice(score_field_prefix.length);
+          return <RadioButton key={index} name={key} value={value} onChange={onRadioChange}></RadioButton>
+      })}
       <SimpleButton onClick={onSubmit} color='white' bgColor='blue' text='Submit' borderRadius='10px' size='md'/>
       <p ref={infoRef} className='text-blue-600' style={{ opacity: 1, transition: "opacity 8s" }}>{showInfo}</p>
     </div>

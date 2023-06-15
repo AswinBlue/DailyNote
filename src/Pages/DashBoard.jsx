@@ -3,8 +3,8 @@ import { GoPrimitiveDot } from 'react-icons/go';
 import { IoIosMore } from 'react-icons/io';
 import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
 
-import { Stacked, Pie, SwitchButton, LineChart, StackedChart, SparkLineChart, DailyTable } from '../Components';
-import { earningData, medicalproBranding, recentTransactions, weeklyStats, dropdownData, SparklineAreaData, ecomPieChartData } from '../Data/dummy';
+import { Stacked, Pie, SwitchButton, LineChart, StackedChart, lineChart, DailyTable } from '../Components';
+import { earningData, medicalproBranding, recentTransactions, weeklyStats, dropdownData, lineAreaData, ecomPieChartData } from '../Data/dummy';
 import { useStateContext } from '../Contexts/ContextProvider';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,7 +12,7 @@ import { useGapiContext, gapiConfig } from '../API/GAPI';
 
 import { useEffect, useState } from 'react';
 import { parseJson } from '../API/JsonParser';
-import { score_fields, dashboard_config } from '../Data/configs';
+import { score_field_prefix, dashboard_config } from '../Data/configs';
 
 const DashBoard = () => {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const DashBoard = () => {
   const { isSignedIn, getEventById, getEventList, updateCalendarEvent, addCalendarEvent, getCalendarEvents, createCalendar, getCalendarList, gapiLogout, gapiLogin  } = useGapiContext()
   const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
   const [eventList, setEventList] = useState(null);
-  const [sparkLineData, setSparkLineData] = useState([]);
+  const [lineChartData, setLineChartData] = useState([]);
   const [stackedChartData, setStackedChartData] = useState([]);
 
   useEffect(() => {
@@ -37,7 +37,11 @@ const DashBoard = () => {
     getEventList((element) => {
       // 날짜별로 정렬
       var newEventList = [];
-      var newSparkLineData = [];
+      var score_fields = [];
+      /*
+        lineChartData = {"Today's mood":[ { "x": 1667952000000, "y": "50" }, { "x": 1669593600000, "y": "75" }, { "x": 1669593600000, "y": "75" }, { "x": 1670198400000, "y": "25" }, { "x": 1670198400000, "y": "50" }, { "x": 1675209600000, "y": "75" }, { "x": 1675209600000, "y": "50" }, { "x": 1675209600000, "y": "50" }, { "x": 1675209600000, "y": "50" }, { "x": 1675900800000, "y": "50" }, { "x": 1676073600000, "y": "75" }, { "x": 1676332800000, "y": "75" } ]}
+      */
+      var newLineChartData = {};
       element.items.forEach((a_event, idx) => {
         var {metaData, body} = parseJson(a_event.description);
         var data = {
@@ -46,18 +50,33 @@ const DashBoard = () => {
           "start": a_event.start.dateTime,
         };
         
+        // if 'metaData' field exist
         if (metaData) {
-          score_fields.forEach(fieldName => {
-            let date = new Date(a_event.start.dateTime.substring(0,10))
-            if (metaData[fieldName]) {
-              data[fieldName] = metaData[fieldName];
-              newSparkLineData.push({x:date.getTime(), y:metaData[fieldName]});
+          // find key starting with 'stackedChartData'
+          console.log('meta:', metaData);
+          Object.entries(metaData).forEach(([key, value]) => {
+            if (key.startsWith(score_field_prefix)) {
+              score_fields.push(key); // to make list of key starting with 'score_field_prefix'
+              var currentData = null;
+              // if key exist, use already created list
+              if (newLineChartData.hasOwnProperty(key)) {
+                currentData = newLineChartData[key];
+              }
+              // create new empty list
+              else {
+                newLineChartData[key] = [];
+                currentData = newLineChartData[key];
+              }
+              let date = new Date(a_event.start.dateTime.substring(0,10))
+              data[key] = metaData[key];
+              
+              currentData.push({x:date.getTime(), y:metaData[key]});
+              console.log('newLineChartData', newLineChartData);
             }
           });
         }
         newEventList.push(data);
       }); // -> forEach
-        
         
       /* 
         stackedChartData = [{data:[{x:'one',y:100} dataName:'name1', {x:'two',y:200}]}, {data:[{x:'one',y:0}, {x:'two',y:250}], dataName:'name2'}]
@@ -72,7 +91,7 @@ const DashBoard = () => {
         if (!accum_data.hasOwnProperty(month)) {
           accum_data[month] = Array(score_fields.length + 1).fill(0); // [count, accumedscore1, accumedscore2, ...]
         }
-
+        
         accum_data[month][0] += 1; // count
         // scores
         score_fields.forEach((fieldName, idx) => {
@@ -82,7 +101,7 @@ const DashBoard = () => {
           }
         });
       }); // -> forEach
-
+      
       // push data
       for (const key in accum_data) {
         if (accum_data[key]) {
@@ -93,7 +112,7 @@ const DashBoard = () => {
             }
             newStackedChartData[idx].data.push({x:key, y: (average)}); // average data (sum / count)
             console.log('stackedChartData:', newStackedChartData);
-          }); // -> forEach
+          }); // -> datasetLineChartDataforEach
         }
       }
       
@@ -103,14 +122,14 @@ const DashBoard = () => {
       });
       
       console.log('stackedChartData:', newStackedChartData);
-
+      
       setEventList(newEventList);
-      setSparkLineData(newSparkLineData);
+      setLineChartData(newLineChartData);
       setStackedChartData(newStackedChartData);
     }); // -> getEventList
   }, [isSignedIn]);
 
-  useEffect(() => {console.log('sparkLineData:', sparkLineData)}, [sparkLineData]);
+  useEffect(() => {console.log('lineChartData:', lineChartData)}, [lineChartData]);
   
 
   return (
@@ -214,25 +233,18 @@ const DashBoard = () => {
                   </p>
                 </div> */}
                 {/* chart 1 */}
+                {/* TODO: make key-selector screen, and let user select the key */}
                 <div className='mt-5 w-fit h-fit border-b-1 border-l-1 border-slate-700 max-w-xl'>
-                  {sparkLineData.length > 0 &&
-                    <SparkLineChart 
-                      currentColor='blue'
-                      id='line-sparkLine'
-                      type='Line'
-                      height={dashboard_config.sparkLineChart.height}
-                      width={dashboard_config.sparkLineChart.width}
-                      // width={screenSize / 2}
-                      data={sparkLineData}
-                      color='blue'
-                      lineWidth={1}
-                      board
-                      tooltipSettings={{
-                        visible:false,
-                        trackLineSettings: {
-                            visible:false
-                        }
-                      }}
+                  {lineChartData.length > 0 &&
+                    <LineChart 
+                      id='charts'
+                      name=''
+                      type='StackingLine'
+                      height={dashboard_config.lineChart.height}
+                      width={dashboard_config.lineChart.width}
+                      data={lineChartData}
+                      color='#008000'
+                      currentColor='white'
                     />
                   }
                 </div>

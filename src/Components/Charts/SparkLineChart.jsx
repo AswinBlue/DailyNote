@@ -27,8 +27,9 @@ const SparkLineChart = ({id, type, height, width, color, currentColor, data}) =>
             {/* <Inject services={[SparklineTooltip]} /> */}
             </SparklineComponent>
         )
-    } catch (e) {
-        return <div/> // empty component when error occur
+    } catch (error) {
+        console.error('An error occurred while rendering the SparklineComponent:', error);
+        return null // empty component when error occur
     }
 
 }

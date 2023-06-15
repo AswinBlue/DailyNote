@@ -47,9 +47,9 @@ export const GAPI = ({ children }) => {
       tokenClient.current = await window.google.accounts.oauth2.initTokenClient({
         // TODO: check it works in mobile
         client_id : CLIENT_ID,
-        redirect_uri : process.env.REACT_APP_HOME_PAGE + "/login",
         scope: SCOPE,
-        ux_mode: 'redirect', // redirect 모드, 별도 정의 없을시 기본 팝업
+        // ux_mode: 'redirect', // redirect 모드, 별도 정의 없을시 기본 팝업
+        // redirect_uri : process.env.REACT_APP_HOME_PAGE + "/login",
         // requestAccessToken 동작 이후 발생할 callback 함수 설정
         callback: (tokenResponse) => {
           console.log('tokenResponse:', tokenResponse);

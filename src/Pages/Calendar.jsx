@@ -3,8 +3,8 @@ import { useGapiContext, gapiConfig } from '../API/GAPI';
 import { useNavigate } from 'react-router-dom';
 import { parseJson } from '../API/JsonParser';
 import { ScheduleComponent, ViewsDirective, ViewDirective, Day, Week, Month, Year, Agenda, Inject, Resize, DragAndDrop } from '@syncfusion/ej2-react-schedule';
+import { score_field_prefix } from '../Data/configs';
 import { Header } from '../Components';
-import { score_fields } from '../Data/configs';
 import { MdRefresh } from 'react-icons/md';
 
 const Calendar = () => {
@@ -43,8 +43,10 @@ const Calendar = () => {
                   "eventId": a_event.id,
                 };
                 if (metaData) {
-                  score_fields.forEach(element => {
-                    data[element] = metaData[element];
+                  Object.entries(metaData).forEach(([key, value]) => {
+                    if (key.startsWith(score_field_prefix)) {
+                      data[key] = metaData[key];
+                    }
                   });
                 }
                 totalData.push(data);
@@ -57,12 +59,12 @@ const Calendar = () => {
     });  //-> getCalendarList
   };
   
-  const onPopupBodyClick = (event) => {
-    navigate('/write?eventId='+event.data.eventId); // redirect
-  }
-  const onPopupHeaderClick = (event) => {
-    console.log('PopupHeader click')
-  }
+  // const onPopupBodyClick = (event) => {
+  //   navigate('/write?eventId='+event.data.eventId); // redirect
+  // }
+  // const onPopupHeaderClick = (event) => {
+  //   console.log('PopupHeader click')
+  // }
 
   // const headerTemplate = (props) => {
   //   return (
@@ -150,6 +152,7 @@ const Calendar = () => {
           console.log('popup:', args);
           // Customize the create popup
           if (args.type === "ViewEventInfo") {
+            // full-screen popup
             args.cancel = false; // Cancel the default popup
           } else if (args.type === "Editor") {
             args.cancel = true; // Cancel the default popup
@@ -160,32 +163,36 @@ const Calendar = () => {
             }
           } else if (args.type === "QuickInfo") {
             // args.isContentEditable = true;
-          } else if (args.type === "DeleteAlert") {
             // let content = args.element.querySelector('#QuickDialog_dialog-content'); 
+          } else if (args.type === "DeleteAlert") {
+            console.log('args.element:', args.element);
             let button = args.element.querySelector('.e-quick-dialog-delete'); 
-            button.addEventListener('click', () => {
-              deleteEvent(args.data.eventId, 
-                () => {
-                  console.log('event deleted');
-                  if (scheduleRef.current) {
-                    console.log(scheduleRef.current);
-                    let records = scheduleRef.current.getCurrentViewEvents(); 
-                    console.log(records);
-                    let newEventsData = [...eventsData];
-                    eventsData.map((item, idx) => {
-                      console.log(item.eventId , args.data.eventId)
-                      if (item.eventId == args.data.eventId) {
-                        newEventsData.splice(idx, 1); // remove item by index
-                        console.log('delete', idx);
-                        // scheduleRef.current.deleteEvent(idx);
-                      }
-                    }) // -> map
-                    setEventsData(newEventsData);
-                    scheduleRef.current.refresh();
+            console.log('button:', button);
+            if (button) {
+              button.addEventListener('click', () => {
+                deleteEvent(args.data.eventId, 
+                  () => {
+                    console.log('event deleted');
+                    if (scheduleRef.current) {
+                      console.log(scheduleRef.current);
+                      let records = scheduleRef.current.getCurrentViewEvents(); 
+                      console.log(records);
+                      let newEventsData = [...eventsData];
+                      eventsData.map((item, idx) => {
+                        console.log(item.eventId , args.data.eventId)
+                        if (item.eventId == args.data.eventId) {
+                          newEventsData.splice(idx, 1); // remove item by index
+                          console.log('delete', idx);
+                          // scheduleRef.current.deleteEvent(idx);
+                        }
+                      }) // -> map
+                      setEventsData(newEventsData);
+                      scheduleRef.current.refresh();
+                    }
                   }
-                }
-              )
-            });
+                )
+              });
+            }
           }
         }}
         

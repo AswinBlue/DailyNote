@@ -6,7 +6,7 @@ import { MdDateRange, MdOutlineCancel, MdModeEditOutline, MdDelete, MdDescriptio
 
 import { parseJson } from '../API/JsonParser';
 import { Header, Popup} from '../Components'
-import { score_fields, read_table_grid } from '../Data/configs';
+import { score_field_prefix, list_table_grid } from '../Data/configs';
 
 
 const List = () => {
@@ -17,12 +17,22 @@ const List = () => {
   const [eventsGrid, setEventsGrid] = useState();
   const [showPopup, setshowPopup] = useState(false);
   const [clickedRecord, setClickedRecord] = useState(null);
+  const [scoreFields, setScoreFields] = useState([]);
   const navigate = useNavigate();
 
-  // set grid of the table
+  
+  // 로그인 후 1회만 재 랜더링하도록 useEffect 사용
   useEffect(() => {
-    var grid = [...read_table_grid];
-    score_fields.forEach(element => {
+    loadData();
+    setGrid();
+  }, [isSignedIn]);
+  
+  useEffect(() => {}, [eventsData]); // to refresh after delete
+  
+  // set grid of the table
+  const setGrid = () => {
+    var grid = [...list_table_grid];
+    scoreFields.forEach(element => {
       grid.push(
         {
           headerText: element,
@@ -36,19 +46,13 @@ const List = () => {
     });
     console.log('eventsGrid:', grid);
     setEventsGrid(grid);
-  }, []);
-    
-  // 로그인 후 1회만 재 랜더링하도록 useEffect 사용
-  useEffect(() => {
-    loadData();
-  }, [isSignedIn]);
-
-  useEffect(() => {}, [eventsData]); // to refresh after delete
+  };
 
   const loadData = () => {
     getEventList((events) => {
       console.log('events:', events);
       var totalData = [];
+      var newScoreFields = [];
       events.items.map(a_event => {
         var {metaData, body} = parseJson(a_event.description);
         // console.log('metaData:', metaData);
@@ -60,13 +64,17 @@ const List = () => {
         };
 
         if (metaData) {
-          score_fields.forEach(element => {
-            data[element] = metaData[element];
+          Object.entries(metaData).forEach(([key, value]) => {
+            if (key.startsWith(score_field_prefix)) {
+              data[key] = metaData[key];
+              newScoreFields.push(key);
+            }
           });
         }
         totalData.push(data);
       });
       console.log('totalData:', totalData);
+      setScoreFields(newScoreFields);
       setEventsData(totalData);
     });
   };

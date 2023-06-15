@@ -1,6 +1,8 @@
-export const score_fields = ["Today's mood"];
 export const sidebar_active_threshold = 900;
-export const read_table_grid = [
+export const score_field_prefix = "CDATA_";
+export const score_field_default = [score_field_prefix + "today's Mood"];
+// TODO: 언어팩 KR, ENG 적용
+export const list_table_grid = [
     {
       headerText: 'summary',
       field: 'summary',
@@ -28,12 +30,12 @@ export const read_table_grid = [
   ];
 
   export const dashboard_config = {
-    sparkLineChart : {
+    lineChart : {
       height: '120px',
-      width: '750px',
+      width: '550px',
     },
     stackedChart: {
-      width: '750px',
+      width: '550px',
       height: '360px',
     }
   }
