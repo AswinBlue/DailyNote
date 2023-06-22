@@ -45,7 +45,7 @@ function Sidebar() {
     return (
         <div className='ml-3 h-screen overflow-auto md:overflow-hidden md:hover:overflow-auto pb-10 z-10'>
             {activeMenu && (
-                <>
+                <div>
                     <div className='flex justify-between items-center'>
                         <Link to="/" onClick={() => {
                                 handleCloseSideBar();
@@ -90,7 +90,7 @@ function Sidebar() {
                             </div>
                         ))}
                     </div>
-                </>
+                </div>
             )}
         </div>
     )

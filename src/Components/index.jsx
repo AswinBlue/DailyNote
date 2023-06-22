@@ -22,5 +22,6 @@ export { default as InfoPopup } from './InfoPopup';
 export { default as DateSelector } from './DateSelector';
 export { default as DailyTable } from './DailyTable';
 export { default as Popup } from './Popup';
+export { default as EditableList } from './EditableList';
 
 // export all components

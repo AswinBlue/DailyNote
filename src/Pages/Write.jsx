@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useLocation } from "react-router-dom";
 
-import { HtmlEditor, Image, Inject, Link, QuickToolbar, RichTextEditorComponent, Toolbar } from '@syncfusion/ej2-react-richtexteditor';
+import { Button } from "@syncfusion/ej2-buttons";
+import { MouseEventArgs } from "@syncfusion/ej2-base";
 import { useGapiContext, gapiConfig } from '../API/GAPI';
 
-import { Header, LineEditor, AreaEditor, SimpleButton, RadioButton, DateSelector } from '../Components';
+import { Header, LineEditor, AreaEditor, SimpleButton, RadioButton, DateSelector, EditableList } from '../Components';
 import { parseJson } from '../API/JsonParser';
 import { score_field_prefix, score_field_default } from '../Data/configs';
 
@@ -30,6 +31,7 @@ const Write = () => {
   useEffect(() => {
     parseUrl();
     loadData();
+    var scoreList = new EditableList
   }, [isSignedIn]);
 
   useEffect(() => {

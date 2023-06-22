@@ -96,7 +96,7 @@ const UserProfile = ({ avatar }) => {
                 </div>
             ) : (
                 // if not logged in, show login button
-                <>
+                <div>
                 <button 
                     className='flex items-center justify-center w-52'
                     onClick={() => {gapiLogin()}}
@@ -106,7 +106,7 @@ const UserProfile = ({ avatar }) => {
                 {/* if use googleId
                 <div id={gapiConfig.GOOGLE_LOGIN_BUTTON_ID}/> 
                 */}
-                </>
+                </div>
             )}
         </div>
 
