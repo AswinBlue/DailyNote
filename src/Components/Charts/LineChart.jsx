@@ -1,15 +1,44 @@
-import React from 'react';
-import { ChartComponent, SeriesCollectionDirective, SeriesDirective, Inject, Legend, Category, Tooltip, DataLabel, LineSeries } from '@syncfusion/ej2-react-charts';
+import React, { useEffect, useState } from 'react';
+import { ChartComponent, SeriesCollectionDirective, SeriesDirective, Inject, Legend, Category, Tooltip, DataLabel, StackingLineSeries } from '@syncfusion/ej2-react-charts';
 
-const LineChart = ({id, name, type, height, width, color, currentColor, data}) => {
-    const marker = { visible: true, width: 10, height: 10, border: { width: 2, color: {color} } };
+const LineChart = ({height, width, color, data, xInterval, yInterval}) => {
+    useEffect(() => {
+        console.log("LineChartData:", data);
+        setLineData(data);
+    }, [data]);
+
+    const [lineData, setLineData] = useState([]); // to rerender LineChart when 'data' is updated
+
+
+    // const presetColor = ['blue', 'green', 'red', 'yellow', 'purple', 'orange', 'pink', 'gray', 'brown', 'teal']; // 10 preset is ready
+
     return (
-        <ChartComponent id={id}>
-        <Inject services={[LineSeries, Legend, Tooltip, DataLabel, Category]}/>
-        <SeriesCollectionDirective>
-            <SeriesDirective dataSource={data} xName='x' yName='y' height={height} width={width} name={name} type={type} fill={currentColor}>
-            </SeriesDirective>
-        </SeriesCollectionDirective>
+        <ChartComponent
+            id='charts'
+            primaryXAxis={{ valueType: 'Double', labelFormat: '', visible: false }}
+            primaryYAxis={{ title: 'Score', minimum: 0, maximum: 100, labelFormat: '{value}' }}
+            width={width}
+            hegiht={height}
+        >
+            <Inject services={[StackingLineSeries, Legend, Tooltip, DataLabel, Category]}/>
+            <SeriesCollectionDirective>
+                {Object.entries(lineData).map((item, idx) => (
+                    <SeriesDirective
+                        name={item[0]} // key of json
+                        dataSource={item[1]} // value of json
+                        xName='x'
+                        yName='y' 
+                        // height={height} 
+                        width='2'
+                        type='StackingLine' 
+                        // fill={presetColor[idx]} // enable to use custom color
+                        marker={{ visible: true }}
+                        dashArray='5,1'
+                        >
+                            
+                    </SeriesDirective>
+                ))}
+            </SeriesCollectionDirective>
         </ChartComponent>
     );
 }

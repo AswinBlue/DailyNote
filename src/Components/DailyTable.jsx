@@ -52,7 +52,7 @@ const DailyTable = ({eventList}) => {
     setChosenX(x);
     setChosenY(y);
     setToolTip(day);
-    // console.log('setTooltipPosition', x, y);
+    console.log('setTooltipPosition', x, y);
   };
 
   const generateChart = () => {
@@ -76,10 +76,10 @@ const DailyTable = ({eventList}) => {
           // data-tooltip={new Date(today.setDate(today.getDate() - 364 - dayOfWeek + i)).toISOString().substring(0,16)}
           data-tooltip={day}
           onMouseOver={() => setTooltipPosition(i, day)}
-          // onMouseOut={() => setTooltipPosition(-1)}
+          onMouseOut={() => setTooltipPosition(-1, day)}
           className={
-            "w-3 h-3 hover:border-cyan-700 border-2 rounded-sm col-span-1 row-span-1 " +
-            ((dayOfWeek > i || i >= 365 + dayOfWeek) ? (" invisible border-0") : (attendanceData[i + 1 - dayOfWeek] ? "bg-blue-500" : "bg-gray-400"))
+            "w-3 h-3 hover:border-cyan-700 b-0 border-2 rounded-sm col-span-1 row-span-1 " +
+            ((dayOfWeek > i || i >= 365 + dayOfWeek) ? (" invisible border-0") : (attendanceData[i + 1 - dayOfWeek] ? "bg-blue-500" : "bg-gray-300"))
           }
         />
       );
@@ -90,7 +90,7 @@ const DailyTable = ({eventList}) => {
 
   // 7 by 53 grid, expand column first
   return (
-    <div className="relative">
+    <div className="relative w-fit">
       <div className="flex w-fit">
         <div className="flex-col font-bold text-gray-400">
           <div className="w-10 h-3 mr-2 text-xs">SUN</div>
@@ -101,15 +101,15 @@ const DailyTable = ({eventList}) => {
           <div className="w-10 h-3 mr-2 text-xs">FRI</div>
           <div className="w-10 h-3 mr-2 text-xs">SAT</div>
         </div>
-        <div className="overflow-x-auto grid w-800 grid-cols-54 grid-rows-7 grid-flow-col gap-0">
+        <div className="grid w-800 grid-cols-54 grid-rows-7 grid-flow-col gap-0">
           {chart && chart.map((square) => {
             return square;
           })}
         </div>
         <div className="w-12"/>
       </div>
-      <text className={"rounded-md bg-white text-xs absolute border-blue-300 py-0.5 px-1 pointer-events-none" + ((chosenX < 0 || chosenY < 0) ? "invisible" : "border-2")}
-       style={{ top: 12 + chosenY * 12, left: 40 + chosenX * 14.8 }}
+      <text className={"rounded-md bg-white w-24 text-xs absolute border-cyan-700 py-0.5 px-1 pointer-events-none " + ((chosenX < 0 || chosenY < 0) ? "invisible" : "border-1")}
+       style={{ top: (12 - 37) + chosenY * 12, left: 42 + chosenX * 14.8 }}
        x={chosenX} y={chosenY} dy="0.25em">{toolTip}</text>
     </div>
   );

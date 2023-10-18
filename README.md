@@ -3,7 +3,7 @@
 - set `package.json` and run `npm install react-scripts; npm install --legacy-peer-deps` to cmd
 - set `src/index.css` with tailwind settings
 - set `tailwind.config.js` file and `craco.config.js`
-- `npm install;npm start`
+- run both scripts `npm run watch:postcss` and `npm install;npm run start` 
 
 ## Deployment
  - install modules by `npm install -g gh-pages`

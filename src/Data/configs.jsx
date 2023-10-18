@@ -1,6 +1,6 @@
 export const sidebar_active_threshold = 900;
 export const score_field_prefix = "CDATA_";
-export const score_field_default = [score_field_prefix + "today's Mood"];
+export const score_field_default = [score_field_prefix + "Today's Mood"];
 // TODO: 언어팩 KR, ENG 적용
 export const list_table_grid = [
     {

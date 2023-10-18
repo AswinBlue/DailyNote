@@ -29,15 +29,16 @@ const Write = () => {
   
   // things to do after login
   useEffect(() => {
-    parseUrl();
-    loadData();
-    var scoreList = new EditableList
+    if (!parseUrl()) {
+      // url 파싱할 내용이 없다면, 신규 event를 위해 기존 정보 load
+      loadData();
+    }
   }, [isSignedIn]);
 
   useEffect(() => {
     // TODO: reload RadioButton when score changes
-    console.log('reload', score);
-  }, []); // score
+    console.log('reload' + JSON.stringify(score, null, 2));
+  }, [score]); // score
 
   /**
    * load calendar data from gapi, take scoreField
@@ -51,7 +52,8 @@ const Write = () => {
         if (metaData) {
           Object.entries(metaData).forEach(([key, value]) => {
             if (key.startsWith(score_field_prefix)) {
-              newScore[key] = value;
+              // 이전에 사용한 항목이 있었는지 체크, 기본점수(50) 부여
+              newScore[key] = 50;
             }
           });
         }
@@ -68,26 +70,27 @@ const Write = () => {
         setDescriptionValue(body);
         setStartDate(a_event.start.dateTime);
         setSelectedDate(a_event.start.dateTime);
-        // if (metaData) {
-        //   console.log(metaData);
-        //   var newScore = { ...score }; // deep copy score
-        //   // for all key,value in json object
-        //   Object.entries(metaData).forEach(([key, value]) => {
-        //     console.log(key, value, score);
-        //     if (newScore.hasOwnProperty(key)) {
-        //       // if key exist, update
-        //       newScore[key] = value;
-        //     }
-        //   });
-        //   setScore(newScore);
-        // }
+        if (metaData) {
+          console.log(metaData);
+          var newScore = { ...score }; // deep copy score
+          // for all key,value in json object
+          Object.entries(metaData).forEach(([key, value]) => {
+            newScore[key] = value;
+          });
+          setScore(newScore);
+        }
         console.log('event:', summaryValue, descriptionValue, selectedDate, score);
       });
+      return true;
     } else if (url_param.get("startTime")) {
       let startTime = new Date(url_param.get("startTime"));
       console.log('startTime:', startTime);
       setSelectedDate(startTime);
       setStartDate(startTime);
+      return true;
+    }
+    else {
+      return false;
     }
   };
   
@@ -201,17 +204,18 @@ const Write = () => {
   };
 
   return (
-    // TODO: 점수 항목 추가할수 있게
     <div className='m-10 p-10 bg-white rounded-3xl'>
       <Header category={process.env.REACT_APP_PAGE_NAME} title="Write"/>
       <LineEditor title='Summary' value={summaryValue} onChange={onTextChange}/>
       <DateSelector startDate={startDate} onDateChange={onDateChange}/>
       <AreaEditor title='Description' value={descriptionValue} onChange={onTextChange}/>
-      {score && Object.entries(score).map(([key, value], index) => {
+      {/* // TODO: 점수 항목 추가할수 있게 */}
+      {/* {score && Object.entries(score).map(([key, value], index) => {
           // remove score_field_prefix from key
           key = key.slice(score_field_prefix.length);
           return <RadioButton key={index} name={key} value={value} onChange={onRadioChange}></RadioButton>
-      })}
+      })} */}
+      <EditableList listData={score} rowComponent={RadioButton}></EditableList>
       <SimpleButton onClick={onSubmit} color='white' bgColor='blue' text='Submit' borderRadius='10px' size='md'/>
       <p ref={infoRef} className='text-blue-600' style={{ opacity: 1, transition: "opacity 8s" }}>{showInfo}</p>
     </div>

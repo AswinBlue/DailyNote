@@ -6,13 +6,17 @@
   "dependencies": {
     "@syncfusion/ej2": "^19.4.48",
     "@syncfusion/ej2-base": "^20.4.51",
+    "@syncfusion/ej2-buttons": "^22.1.34",
+    "@syncfusion/ej2-lists": "^22.1.34",
     "@syncfusion/ej2-react-base": "^19.4.38",
+    "@syncfusion/ej2-react-buttons": "^22.1.34",
     "@syncfusion/ej2-react-calendars": "^19.4.48",
     "@syncfusion/ej2-react-charts": "^19.4.50",
     "@syncfusion/ej2-react-dropdowns": "^19.4.52",
     "@syncfusion/ej2-react-grids": "^19.4.50",
     "@syncfusion/ej2-react-inputs": "^19.4.52",
     "@syncfusion/ej2-react-kanban": "^19.4.48",
+    "@syncfusion/ej2-react-lists": "^22.1.34",
     "@syncfusion/ej2-react-popups": "^19.4.52",
     "@syncfusion/ej2-react-richtexteditor": "^19.4.50",
     "@syncfusion/ej2-react-schedule": "^20.3.52",
@@ -32,8 +36,8 @@
     "eject": "react-scripts eject",
     "predeploy": "set \"REACT_APP_ENV=PRODUCTION\" && set \"REACT_APP_HOME_PAGE=$npm_package_homepage\" && npm run build",
     "deploy": "npm run predeploy && set \"REACT_APP_PAGE_NAME=DailyNote\" && gh-pages -d build",
-    "build:postcss":"npx cross-env NODE_ENV=production postcss base.tailwind.css -o target/classes/static/css/tailwind.css",
-    "watch:postcss":"npx cross-env NODE_ENV=production postcss base.tailwind.css -o src/main/resources/static/css/tailwind.css -w"
+    "build:postcss": "npx cross-env NODE_ENV=production postcss base.tailwind.css -o target/classes/static/css/tailwind.css",
+    "watch:postcss": "npx cross-env NODE_ENV=production postcss base.tailwind.css -o src/main/resources/static/css/tailwind.css -w"
   },
   "eslintConfig": {
     "extends": [

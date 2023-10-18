@@ -75,7 +75,7 @@ function App() {
 
         {/* sidebar 설정 */}
         {activeMenu ? (
-          <div className='w-72 fixed sidebar dark:bg-secondary-dark-bg bg-white'>
+          <div className='w-72 fixed sidebar h-full dark:bg-secondary-dark-bg bg-white'>
             <Sidebar></Sidebar>
           </div>
         ) : (

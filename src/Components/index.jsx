@@ -23,5 +23,6 @@ export { default as DateSelector } from './DateSelector';
 export { default as DailyTable } from './DailyTable';
 export { default as Popup } from './Popup';
 export { default as EditableList } from './EditableList';
+export { default as VerticalRowListItem } from './VerticalRowListItem';
 
 // export all components

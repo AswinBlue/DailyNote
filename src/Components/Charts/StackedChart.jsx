@@ -11,7 +11,7 @@ import { stackedCustomSeries, stackedPrimaryXAxis, stackedPrimaryYAxis } from '.
 */
 const StackedChart = ({ width, height, data}) => {
     const [stackData, setStackData] = useState([]);
-    const presetColor = ['blue', 'green', 'red', 'yellow', 'purple', 'orange', 'pink', 'gray', 'brown', 'teal']; // 10 preset is ready
+    // const presetColor = ['blue', 'green', 'red', 'yellow', 'purple', 'orange', 'pink', 'gray', 'brown', 'teal']; // 10 preset is ready
     const stackedPrimaryYAxis = {
         lineStyle: { width: 0 },
         minimum: 0,
@@ -26,48 +26,51 @@ const StackedChart = ({ width, height, data}) => {
 
     useEffect(() => {
         if (data) {
-            data.slice(presetColor.length); // cut into maximum length
+            // data.slice(presetColor.length); // cut into maximum length
 
             let stackData = data.map((element, idx) => {
+                /*
                 if (idx >= presetColor.length) {
                     return;
                 }
+                */
+               
                 return {
                     dataSource: element.data,
                     xName: 'x',
                     yName: 'y',
                     name: element.dataName,
                     type: 'StackingColumn',
-                    background: presetColor[idx],
+                    // background: presetColor[idx], // enalbe if use custom color
                 };
             });
-            console.log('stackData:', stackData);
+            console.log('refined stackedChart data:', stackData);
             setStackData(stackData);
         }
     }, [data]);
     
     return (
-    <ChartComponent
-        width={width}
-        hegiht={height}
-        id="chart"
-        primaryXAxis={stackedPrimaryXAxis}
-        primaryYAxis={stackedPrimaryYAxis}
-        chartArea={{ border: {width:0} }}
-        tooltip={{ enable: true }}
-    >
-        <Inject
-            services={[Legend, Category, StackingColumnSeries, Tooltip]}
-        />
-        <SeriesCollectionDirective>
-            {/* dummy 데이터에서 가져온 json을 순회하며 component 생성 */}
-            {stackData.map((item, index) => (
-                // item 으로 받은 데이터(json) 전체를 인자로 전달, key와 value를 그대로 사용
-                <SeriesDirective key={index} {...item} />
-            ))}
-        </SeriesCollectionDirective>
-    </ChartComponent>
-)
+        <ChartComponent
+            width={width}
+            hegiht={height}
+            id="chart"
+            primaryXAxis={stackedPrimaryXAxis}
+            primaryYAxis={stackedPrimaryYAxis}
+            chartArea={{ border: {width:0} }}
+            tooltip={{ enable: true }}
+        >
+            <Inject
+                services={[Legend, Category, StackingColumnSeries, Tooltip]}
+            />
+            <SeriesCollectionDirective>
+                {/* dummy 데이터에서 가져온 json을 순회하며 component 생성 */}
+                {stackData.map((item, index) => (
+                    // item 으로 받은 데이터(json) 전체를 인자로 전달, key와 value를 그대로 사용
+                    <SeriesDirective key={index} {...item} />
+                ))}
+            </SeriesCollectionDirective>
+        </ChartComponent>
+    );
 }
 
-export default StackedChart
+export default StackedChart;

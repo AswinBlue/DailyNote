@@ -8,7 +8,6 @@ import { parseJson } from '../API/JsonParser';
 import { Header, Popup} from '../Components'
 import { score_field_prefix, list_table_grid } from '../Data/configs';
 
-
 const List = () => {
   const { isSignedIn, getEventList, getCalendarEvents, getCalendarList, deleteEvent } = useGapiContext()
   const CALENDAR_NAME = gapiConfig.CALENDAR_NAME;
