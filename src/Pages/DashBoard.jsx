@@ -276,7 +276,7 @@ const DashBoard = () => {
           </div>
           {/* chart 2 */}
           <div className='pb-10 pr-10'>
-            {stackedChartData.length > 0 &&
+            {stackedChartData &&
               <StackedChart
                 width={dashboard_config.stackedChart.width}
                 height={dashboard_config.stackedChart.height}

@@ -209,7 +209,7 @@ const Calendar = () => {
           <ViewDirective option='Month' isSelected={true} showWeekNumber={true}/>
           <ViewDirective option='Year' showWeekNumber={true}/>
         </ViewsDirective>
-        <Inject services={[Week, Month, Year]}/>
+        <Inject services={[Week, Month, Year, DragAndDrop]}/>
       </ScheduleComponent>
     </div>
   )

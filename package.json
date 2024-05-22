@@ -32,6 +32,7 @@
   "scripts": {
     "start": "set \"REACT_APP_ENV=DEVELOPMENT\" && set \"REACT_APP_HOME_PAGE=$npm_package_homepage\" && react-scripts start",
     "build": "react-scripts --max_old_space_size=4096 build",
+    "postbuild": "react-snap",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "set \"REACT_APP_ENV=PRODUCTION\" && set \"REACT_APP_HOME_PAGE=$npm_package_homepage\" && npm run build",
@@ -68,5 +69,13 @@
     "postcss": "^8.4.24",
     "postcss-cli": "^10.1.0",
     "tailwindcss": "^3.1.8"
+  },
+  "reactSnap": {
+    "inlineCss": false,
+    "puppeteer": {
+      "cache": false
+    },
+    "removeBlobs": true,
+    "fixWebpackChunksIssue": true
   }
 }

@@ -28,7 +28,7 @@ const StackedChart = ({ width, height, data}) => {
         if (data) {
             // data.slice(presetColor.length); // cut into maximum length
 
-            let stackData = data.map((element, idx) => {
+            let refinedStackData = data.map((element, idx) => {
                 /*
                 if (idx >= presetColor.length) {
                     return;
@@ -44,8 +44,8 @@ const StackedChart = ({ width, height, data}) => {
                     // background: presetColor[idx], // enalbe if use custom color
                 };
             });
-            console.log('refined stackedChart data:', stackData);
-            setStackData(stackData);
+            console.log('refined stackedChart data:', refinedStackData);
+            setStackData(refinedStackData);
         }
     }, [data]);
     
